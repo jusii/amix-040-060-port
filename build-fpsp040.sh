@@ -20,7 +20,8 @@
 # GNU/MIT syntax), ld -r into one ELF object.  That object IS accepted by
 # m68k-cbm-sysv4-ld -r for the kernel relink (asserted below).
 #
-# Output: build/fpsp040.o  (.text 0x9952 = 39250 bytes)
+# Output: build/fpsp040.o  (.text 0x994e = 39246 bytes with gcc14's binutils 2.43.1, the cuts' one
+# binutils since 68060-261031-53; 0x9952 = 39250 with Ubuntu's m68k-linux-gnu binutils 2.46)
 set -e
 HERE=$(cd "$(dirname "$0")" && pwd)
 . "$(cd "$(dirname "$0")" && pwd)/tools/config-load.sh"
@@ -67,8 +68,15 @@ m68k-linux-gnu-ld -r -o "$OUT" $OBJS
 
 # ---- assertions (M1 acceptance) ----
 TSZ=$(m68k-linux-gnu-readelf -SW "$OUT" | awk '{gsub(/[][]/,"")} $2==".text"{print $6}')
-[ "$TSZ" = "009952" ] || { echo "[FAIL] .text size 0x$TSZ != 0x9952 (39250)"; exit 1; }
-echo "[OK] .text = 0x9952 (39250 bytes)"
+# The size differs by one instruction: stan.s:231's `lea PITBL+0x200,%a1`, which 2.43.1 relaxes to
+# PC-relative (4 bytes) and 2.46 keeps absolute (6 bytes, R_68K_32).  The other 40 objects have equal
+# sizes; in six of them 2.46 leaves branches to global labels as R_68K_PC16 relocations that 2.43.1
+# resolves itself.  The cut's sums, not this gate, pin which binutils a kernel was built with.
+case "$TSZ" in
+00994e) echo "[OK] .text = 0x994e (39246 bytes: stan.s:231's lea PC-relative, binutils 2.43.1)" ;;
+009952) echo "[OK] .text = 0x9952 (39250 bytes: stan.s:231's lea absolute, binutils 2.46)" ;;
+*) echo "[FAIL] .text size 0x$TSZ is neither 0x994e nor 0x9952"; exit 1 ;;
+esac
 
 for s in fpsp_bsun fpsp_fline fpsp_operr fpsp_ovfl fpsp_snan fpsp_unfl fpsp_unimp fpsp_unsupp; do
 	m68k-linux-gnu-nm "$OUT" | grep -qE " T $s\$" || { echo "[FAIL] entry $s not defined"; exit 1; }
