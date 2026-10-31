@@ -178,7 +178,8 @@ echo "      cdevsw[49], [51], [52] free; z3660eth, zz9000, monsw absent; open: $
 # ---------------------------------------------------------------- 1. the core (brief steps 1-6)
 stage
 PIN=gcc-$(awk '$1=="gcc"{print $2}' "$S/kit/toolchain.pin")-$(awk '$1=="commit"{print $2}' "$S/kit/toolchain.pin")
-GCA=$(dirname "$GCC_CROSS_ENV")/..
+# the checkout build/ is in, taken logically: build/ may be a link into an installed toolchain
+GCA=$(cd "$(dirname "$GCC_CROSS_ENV")/.." && pwd)
 git -C "$GCA" show "$(awk '$1=="commit"{print $2}' "$S/kit/toolchain.pin"):amix-gcc-wrapper.sh" 2>/dev/null \
 	| sed 's/@TARGET@/m68k-cbm-sysv4/' | cmp -s - "$(command -v m68k-cbm-sysv4-gcc)" \
 	|| { echo "[FAIL] the installed m68k-cbm-sysv4-gcc is not the wrapper of the pin $PIN"; exit 1; }
