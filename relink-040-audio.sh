@@ -90,6 +90,8 @@ B="$HERE/build/audiosrc"; rm -rf "$B"; mkdir -p "$B"
 cp "$SRC/audio.c" "$SRC/audio.h" "$B/"
 # the Amiga memory.h, not libc's <memory.h> that the -I order would find first
 cp "$AMIX_SYS/amiga/inc/memory.h" "$B/"
+# the copies keep their modes, and a toolchain installed read-only (make dist's container) gives 0444
+chmod u+w "$B"/*
 run_step 1 python3 "$P/patch_audio_safeclose.py" "$B/audio.c"
 run_step 1 python3 "$P/patch_audio_initwait.py" "$B/audio.c"
 run_step 1 python3 "$P/patch_audio_paula.py" "$B/audio.c"
