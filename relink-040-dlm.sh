@@ -35,7 +35,7 @@
 #   DLM_REPO=<dir>   the core's checkout: amix's kernel/dlm (default: ../amix/kernel/dlm beside this
 #                    repository) or a standalone amix-dlm (tools/dlm-rev.sh)
 #   DLM_REV=<rev>    the revision the core and tools come from (default: the pin below)
-#   DLM_KABI=<tag>   default k46.1.3; must equal the base's kinfo_kabi.  k46.1.2 builds a cut without
+#   DLM_KABI=<tag>   default k46.1.4; must equal the base's kinfo_kabi.  k46.1.2 builds a cut without
 #                    the audio pass (the names of minor 3 are then neither listed nor checked)
 #   DLM_ARENA=<n>    the arena's capacity (default 0x60000, M-MOD1)
 #   DLM_ABI_NEW=1    --fill: a fingerprint that moved is written (KERNEL.abi.txt) and taken instead of
@@ -80,9 +80,11 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 # for the Paula module; core patch 0046, mkksym -k (a kernel lists the names of its own minor, and
 # ksymgate.py and mkabi.py read the minor from dlm_ident); c 54 paula in the registry.  kabi
 # k46.1.3, abi 18c0a1c9 (abi-k46.1.3.txt); at k46.1.2 the fingerprint is unchanged, 2ab48658.
+# 74405ce (amix): core patch 0048, a demand-class filesystem module loads at its first mount (C4-6
+# section 5); kabi k46.1.4, which adds no name, so the abi stays 18c0a1c9 (abi-k46.1.4.txt).
 DLM_REPO="${DLM_REPO:-$HERE/../amix/kernel/dlm}"
-DLM_REV="${DLM_REV:-e45b061}"
-DLM_KABI="${DLM_KABI:-k46.1.3}"
+DLM_REV="${DLM_REV:-74405ce}"
+DLM_KABI="${DLM_KABI:-k46.1.4}"
 DLM_ARENA="${DLM_ARENA:-0x60000}"
 S="$HERE/build/dlm-rev"
 dlm_rev
