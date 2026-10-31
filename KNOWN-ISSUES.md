@@ -2316,6 +2316,17 @@ Deterministinen + halpa emu-repro = hyvä jahtikohde sopivassa välissä; ei blo
 mitään nykyistä (halttia ei käytetä työnkuluissa). Serial-evidenssi:
 durable-tools/shutdown-i0-crash-serial.log (kopio myös scratchpadissa).
 
+**On `k46-module` (2026-10-31): not reproduced.** The cut `68060-261031-53` in emulation (an A4000 with
+a 68060), each command typed into a root shell on the console: `shutdown -i0 -g0 -y` three times and
+`init 0` three times, each run followed by a verification boot. All six reached "The system is down.",
+the module core's "dlm: halt pass: 2 module(s) stopped" and "The system is halted; you may reboot or
+turn off power." within about 20 s, with no `BUS ERROR` line on any screen. rc0's stop scripts ran
+(probes as its first and last `K` script, 3-4 s apart; cron, syslogd, smtpd, rpcbind and the rpc
+daemons were gone by the last), and every verification boot came up without an fsck. The test rig's
+own end-of-boot halt is the same `shutdown -i0 -g0 -y`, over telnet, and it reached the halt banner on
+16 of 18 boots of `-52` and `-53` (the two misses were cells starved of swap on purpose). Hardware:
+not run yet.
+
 ## ISSUE-27: tail zeroing in the segmap_pagecreate family — ✅✅ PROVEN AND FIXED (2026-07-25, emu-040+060)
 
 > **Ledger: FIXED** — 68040 hardware. Canonical: [`STATUS.md`](STATUS.md) §4.
@@ -9590,6 +9601,15 @@ stopped with `SIGINT` and with `SIGTERM`, the backend draining for **435 ms** in
 about **2.4 KB** still outstanding, the device reopening cleanly afterwards, machine up. So catching
 the signal and draining before close holds for every signal that *can* be caught. **`SIGKILL`
 cannot be**, which is exactly why this stays a kernel defect: the fix belongs in `audioclose`.
+
+**On `k46-module`: fixed for a player stopped or killed mid-sound (emulation).** Since the cut
+`68060-261028-61` the audio pass (`relink-040-audio.sh`) applies amix-paula `62fdcab`'s
+`patch_audio_safeclose.py` before its other two patchers: `audioclose` stops every channel the client
+holds, its interrupt and DMA off, before the client is freed, so the audio interrupt no longer reads
+freed memory. In emulation on `-61` (2026-10-28) a `/dev/audio` player killed with `SIGKILL` closed
+safely, and `/dev/paula` and four `/dev/audio` opens succeeded afterwards; `68060-261031-53` carries
+the same patchers. Not run on hardware. The second hazard above, the client-list unlink loop with no
+end check (a double close, or a close racing the interrupt), is not addressed and has no run.
 
 ## ⚠⚠ ISSUE-69 (2026-09-26, RECORDED — a stock defect, not fixed here by request): `setuid(-123456)` panics the kernel, for any user
 
