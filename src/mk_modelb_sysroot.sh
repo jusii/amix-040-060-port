@@ -61,7 +61,7 @@ for h in immu param; do
 done
 
 # This line's own headers, which the stock sysroot does not have.  sys/monsw.h (P-8) is the
-# /dev/monsw interface: src/monsw.c, the card drivers and the X servers all include it.
+# /dev/monsw interface: the monsw module, the card drivers and the X servers all include it.
 for h in monsw; do
 	[ ! -e "$OUT/usr/include/sys/$h.h" ] \
 		|| { echo "ERROR: the real sysroot already has sys/$h.h -- reconcile before shadowing it"; exit 1; }

@@ -30,7 +30,7 @@
 # ids below 0x8000 match exactly as before.
 #
 # Order: after relink-040-z3660.sh (patch_z3660.py requires the lea to still name the stock
-# table), before relink-040-fpe.sh (always the last link).  The monsw and zz9000 passes do not
+# table), before relink-040-fpe.sh (always the last link).  The zz9000 pass does not
 # touch sd and may run before or after it.
 #
 # usage: sh relink-040-a4091.sh [base-kernel] [output]

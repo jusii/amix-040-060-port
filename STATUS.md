@@ -377,7 +377,7 @@ survives as history but its conclusion has been replaced.
 
 **ISSUE-69 (stock 2.1c `setuid(-123456)` test panic) differs between the two lines.** Upstream keeps it. `driver-line` removes it in the FPE pass (`src/patch_setuid_hook.py`, one byte); EMU acceptance is pending (DL-14).
 
-**The monitor switch on `driver-line` is `/dev/monsw`, char major 52** (`relink-040-monsw.sh`; `mknod /dev/monsw c 52 0`). It was 50 until PO-09, but that row is the SAD STREAMS driver's, so user opens never reached monsw. The zz9000 driver built with `-DZZ9K_MONSW` (amix-z3660rtg 7b449cd onward) switches through it and drives no CIA line itself. Its pass accepts that build only on a base that has monsw. Built and gated only; not yet run in EMU or on HW.
+**The static monitor switch is retired on this branch.** `relink-040-monsw.sh`, `src/monsw.c` and its two helpers are gone, and the zz9000 pass refuses `-DZZ9K_MONSW`. Module kernels get `/dev/monsw` (char major 52) from the monsw module; the `driver-line` branch keeps the static pass.
 
 **The z3660 pass pins its SCSI driver** to amix-z3660scsi `53f43bd` (ZS-03, PO-11: the machine gate reads the Agnus id's low nibble, so NTSC ECS is no longer taken for AGA). It sets `Z3660_SCSI_REV`, and `z3660_040.o` is `277a5b53`. Built and gated only.
 

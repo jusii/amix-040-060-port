@@ -50,7 +50,6 @@
 #                           (the pass log records which).  Default: the pin below; ZZ9000_REV=
 #                           (empty) takes the checkout's working tree instead
 #   ZZ9000_OPTS="..."       extra single-token driver options, e.g. -DZZ9K_Z3660_CON_1280x800
-#                           -DZZ9K_MONSW (RT-04): switch through the base's /dev/monsw; needs relink-040-monsw.sh first
 #                           -DZZ9K_FB_NC (RT-05): register the framebuffer NC via hat_cm_fb_add
 #   ZZ9000_BASE_SHA256=<hex> refuse any base but that one (the pinned f7vs is
 #                           d43a59ccb7df2ebcdf611a7fa322dd84a4c2166fa9d491078025ef4f9e0fa889)
@@ -97,7 +96,7 @@ PARINIT_STOCK=$(m68k-linux-gnu-nm "$IN" | awk '$3=="parinit_orig" && $2=="T"{pri
 [ -n "$PARINIT_STOCK" ] || { echo "ERROR: no parinit_orig in $IN -- the base's parinit is not the z3660 wrapper"; exit 1; }
 [ "$PARINIT_CUR" != "$PARINIT_STOCK" ] || { echo "ERROR: parinit == parinit_orig in $IN"; exit 1; }
 [ "$(echo "$PARINIT_CUR" | wc -w)" = 1 ] || { echo "ERROR: more than one strong parinit in $IN"; exit 1; }
-echo "      parinit (the base's current wrapper: z3660, or monsw over it) @0x$PARINIT_CUR, stock body parinit_orig @0x$PARINIT_STOCK"
+echo "      parinit (the base's current wrapper, z3660's) @0x$PARINIT_CUR, stock body parinit_orig @0x$PARINIT_STOCK"
 
 # ---------------------------------------------------------------- 1. the header set
 echo "[*] Model-B header set (mirror sysroot + geometry probe)"
@@ -122,7 +121,7 @@ ln -s "$AMIX_SYSROOT/usr/include/sys"       "$TREE/sys"
 	|| { echo "ERROR: the sysroot has no usr/sys/amiga/console or usr/sys/amiga/inc"; exit 1; }
 # Pinned (PO-13d, 2026-09-29): amix-z3660rtg dabe447 -- the card-blitter path (RT-07) with its fill
 # colour fix and the svga_switch reset at last close (729cbdc), plus a per-ioctl blitter register
-# cache (RT-09).  zz9000_040.o with -DZZ9K_MONSW: 40d3b16c...  Imports unchanged; the knobs
+# cache (RT-09).  Imports unchanged; the knobs
 # zz9k_blit_on / zz9k_blit_maxarea sit in .data for image patching.
 ZZ9000_REV="${ZZ9000_REV-dabe447}"
 if [ -n "$ZZ9000_REV" ]; then
@@ -195,20 +194,16 @@ fi
 [ "$SCANHITS" = 0 ] || { echo "[FAIL] scan060: ${SCANHITS:-an unrecognised report,} 060-unimplemented candidate(s) in zz9000_040.o"; exit 1; }
 
 echo "[*] the driver's kernel imports must be exactly the seven it is known to need"
-# ... plus exactly monsw_lastclose/monsw_register/monsw_set when built with -DZZ9K_MONSW (RT-04,
-# amix-z3660rtg 7b449cd): the monitor switch then belongs to /dev/monsw, which the base must
-# already carry -- relink-040-monsw.sh runs before this pass (dd -> z3660 -> monsw -> zz9000 -> fpe).
-# ... and hat_cm_fb_add on top when built with -DZZ9K_FB_NC (RT-05, amix-z3660rtg 26ff2d0): the
+# ... plus hat_cm_fb_add when built with -DZZ9K_FB_NC (RT-05, amix-z3660rtg 26ff2d0): the
 # driver registers its framebuffer window in the base's hat_cm_fb table, so user mappings of it
 # take the NC cache class instead of NCS.  That table is this line's hat040.s; a base without it
 # is refused.
 WANT="autocon bootinfo conputc copyin copyout printf uiomove"
+# -DZZ9K_MONSW switched through a static /dev/monsw, which this branch no longer builds (the monitor
+# switch is the monsw module; the driver-line branch keeps the static pass)
 case " $ZZ9000_OPTS " in
 *" -DZZ9K_MONSW "*)
-	WANT="$WANT monsw_lastclose monsw_register monsw_set"
-	m68k-linux-gnu-nm "$IN" | grep -qE " T monswinit\$" \
-		|| { echo "[FAIL] -DZZ9K_MONSW needs a base with /dev/monsw -- run relink-040-monsw.sh first"; exit 1; }
-	echo "      (-DZZ9K_MONSW: the monitor switch goes through the base's monsw)" ;;
+	echo "[FAIL] -DZZ9K_MONSW needs the static monitor switch, which this branch does not build"; exit 1 ;;
 esac
 case " $ZZ9000_OPTS " in
 *" -DZZ9K_FB_NC "*)

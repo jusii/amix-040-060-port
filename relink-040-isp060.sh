@@ -13,7 +13,7 @@
 #
 # Order: after relink-040.sh (isp61 and the FPSP are in the base), before relink-040-fpe.sh, which
 # is always the last link.  For the r6 chain of this line:
-#   dd -> z3660 -> f4arms -> f6 -> monsw -> zz9000 -> rth1 -> ttcompat -> [pgrsv] -> isp060 -> fpe
+#   dd -> z3660 -> f4arms -> f6 -> zz9000 -> rth1 -> ttcompat -> [pgrsv] -> isp060 -> fpe
 #
 # Gates: the package's entry table (build-isp060.sh), the exact import set, no collision with the
 # base, scan060 of the package with exactly its one known data false positive, the hook asserted

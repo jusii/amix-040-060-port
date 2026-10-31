@@ -13,8 +13,7 @@ all three. A read-only character device gives them one record, the same on every
 
 - Character major **53**, minor 0. The node is `mknod /dev/kinfo c 53 0`, mode 0444.
   - Majors 49 to 52 belong to zz9000, sad, z3660eth and monsw, 67 to xsvga and 68 to va2000.
-  - `src/patch_kinfo_cdevsw.py` asserts that row 53 is free on the whole row before it takes it, by the same
-    test `src/patch_monsw_cdevsw.py` uses.
+  - `src/patch_kinfo_cdevsw.py` asserts that row 53 is free on the whole row before it takes it.
 - `read(2)` returns the record's bytes from the file offset up to its length, then 0.
 - `lseek(2)` works as on any character device.
 - `write(2)` fails with `EPERM`.
@@ -98,7 +97,7 @@ card 0.
 `relink-040-kinfo.sh` runs after `relink-040-rth1.sh` (or any pass that exposes `sd_queue_tbl`), before
 `relink-040-fpe.sh`:
 
-    dd -> a3q -> z3660 -> monsw -> zz9000 -> a4091 -> ide -> cdfs -> rth1 -> kinfo -> fpe
+    dd -> a3q -> z3660 -> zz9000 -> a4091 -> ide -> cdfs -> rth1 -> kinfo -> fpe
 
 Its gates:
 - the exact import set and the exact export set;

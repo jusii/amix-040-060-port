@@ -12,7 +12,7 @@
 #
 # A post-pass over any finished base of this line, before relink-040-fpe.sh (the FPE link is
 # always the last link).  It touches only a3091.c's own relocations, which no other driver-line
-# pass edits, so its place relative to the dd, z3660, monsw, zz9000 and a4091 passes is free;
+# pass edits, so its place relative to the dd, z3660, zz9000 and a4091 passes is free;
 # the chains put it right after dd.
 #
 # usage: sh relink-040-a3091q.sh [base-kernel] [output]

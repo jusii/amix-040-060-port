@@ -14,7 +14,7 @@
 #
 # Order: anywhere after the passes that link page_get callers of their own (none today), before
 # relink-040-fpe.sh, which is always the last link.  For the r6 chain of this line:
-#   dd -> z3660 -> f4arms -> f6 -> monsw -> zz9000 -> rth1 -> ttcompat -> pgrsv -> fpe
+#   dd -> z3660 -> f4arms -> f6 -> zz9000 -> rth1 -> ttcompat -> pgrsv -> fpe
 #
 # Gates: the exact import and export sets, no .rodata, no COMMON, no collision with the base,
 # scan060 CLEAN, both SR writes present, the call sites asserted and re-checked.

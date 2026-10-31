@@ -25,7 +25,7 @@
 # functions, and a shift by 11 anywhere else fails the build.
 #
 # A post-pass, before relink-040-fpe.sh (always the last link).  It touches only vfssw, sysent and
-# its own objects, so its place among the dd, a3091q, z3660, monsw, zz9000, a4091 and ide passes is
+# its own objects, so its place among the dd, a3091q, z3660, zz9000, a4091 and ide passes is
 # free.  kerntools names the family (KD060-Z-CD: KD060-Z's chain plus this pass).
 #
 # usage: sh relink-040-cdfs.sh [base-kernel] [output]

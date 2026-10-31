@@ -9,7 +9,7 @@
 #
 # Order: after relink-040-rth1.sh (or any pass that exposes sd's controller array as
 # sd_queue_tbl: rth1, a4091), before relink-040-fpe.sh, which is always the last link.  The chain
-# of this line:  dd -> a3q -> z3660 -> monsw -> zz9000 -> a4091 -> ide -> cdfs -> rth1 -> kinfo -> fpe
+# of this line:  dd -> a3q -> z3660 -> zz9000 -> a4091 -> ide -> cdfs -> rth1 -> kinfo -> fpe
 #
 # Gates: the exact import and export sets, no .rodata, no COMMON, no collision with the base,
 # scan060 CLEAN, the cdevsw row asserted free and re-checked.

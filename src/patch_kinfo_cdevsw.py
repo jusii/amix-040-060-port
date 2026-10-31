@@ -2,7 +2,7 @@
 # patch_kinfo_cdevsw.py -- register /dev/kinfo (src/kinfo.c) in cdevsw[53] after kinfo.o has been
 # ld -r'd into the kernel (docs/contracts/KINFO.md).
 #
-# patch_monsw_cdevsw.py's mechanism and its free-row test, unchanged: a free row's ten function
+# The free-row test: a free row's ten function
 # records are R_68K_32 relocations to `nodev`, d_ttys (+0x28) and d_str (+0x2c) are NULL words with
 # no relocation, d_flag (+0x30) is `nullflag`; anything else is somebody else's driver and the
 # answer is to stop.  kinfo has open, close, read and write (write answers EPERM); ioctl, mmap and

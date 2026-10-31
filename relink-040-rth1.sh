@@ -13,7 +13,7 @@
 #
 # Order: after every pass that registers a controller or adds sdcardbase (a4091, ide), before
 # relink-040-fpe.sh, which is always the last link.  The chain of this line:
-#   dd -> a3q -> z3660 -> monsw -> zz9000 -> a4091 -> ide -> cdfs -> rth1 -> fpe
+#   dd -> a3q -> z3660 -> zz9000 -> a4091 -> ide -> cdfs -> rth1 -> fpe
 # The base must still carry the root and swap name it was stamped with (c6d0s1 / c6d0s2 for the
 # one-kernel families): they are the built-in root this pass falls back to.
 #

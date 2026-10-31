@@ -2,7 +2,7 @@
  * sys/monsw.h -- the monitor switch: /dev/monsw and its kernel API (P-8, 2026-09-28).
  *
  * One machine resource, the CIA-B line(s) that flip a monitor or KVM between the native
- * video and an RTG card, owned by one card-independent driver (src/monsw.c) instead of by
+ * video and an RTG card, owned by one card-independent driver (the monsw module) instead of by
  * each card driver.  Installed as /usr/include/sys/monsw.h on images and in the Model-B
  * sysroot; usable from K&R and ANSI C, kernel and user.
  *
