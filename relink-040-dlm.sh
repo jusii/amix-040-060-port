@@ -1,6 +1,6 @@
 #!/bin/sh
 # relink-040-dlm.sh -- splice amix-dlm's module core into a kernel of this line: the k46 module
-# kernel (amix-dlm docs/plan/stage-3-kernel-brief.md, step 7; contracts C3-2, C3-3, C3-4).
+# kernel (amix-dlm contracts C3-2, C3-3, C3-4).
 #
 #   the core       amix-dlm core/upstream with core/series applied (kdedon's MIT DLM core and
 #                  our patch queue), core/plat/amiga.c + plat/k46/line.c, loader/common's
@@ -26,7 +26,7 @@
 # kinfo's DLM=1 output: its two open imports, dlm_kinfo_list and dlm_marc_post, are the core's.
 # fpe stays the last link.  `relink-040-dlm.sh --fill <kernel>` then fills the block's sizes and
 # AXK1's offsets in place, takes the fingerprint (tools/mkabi.py against abi/k46/abi-<kabi>.txt,
-# C3-3 section 4) and runs the gate (the stage-3 plan's steps 9 and 10), on the last form whose layout
+# C3-3 section 4) and runs the gate (mkksym -f, mkident --fill/--check, ksymgate), on the last form whose layout
 # changes: after the support-probe inject, which grows .text (124 bytes on KD060-Z) and so
 # moves every .data image offset; before emit-family-chains, which patches .data words only.
 #
@@ -106,7 +106,7 @@ stage() {
 	echo "$REV" > "$S/.rev"
 }
 
-# the probe's offset table (the stage-3 plan's step 2), for the core and for the fingerprint
+# the probe's offset table (mkoffs), for the core and for the fingerprint
 offs() {
 	sh "$S/core/tools/mkoffs" m68k-cbm-sysv4-gcc $AMIX_KERNEL_CFLAGS -I"$S/core/include" > "$S/core/dlm_offs.h" \
 		|| { echo "[FAIL] mkoffs"; exit 1; }
@@ -175,7 +175,7 @@ U=$(echo "$NM_IN" | awk '$1=="U" && $2!="edata" && $2!="end" && $2!="etext" {pri
 run_step indent python3 "$HERE/src/check_dlm_splice.py" --free-rows 49,51,52 "$IN"
 echo "      cdevsw[49], [51], [52] free; z3660eth, zz9000, monsw absent; open: $U"
 
-# ---------------------------------------------------------------- 1. the core (stage-3 plan steps 1-6)
+# ---------------------------------------------------------------- 1. the core: archive, patch series, host tools
 stage
 PIN=gcc-$(awk '$1=="gcc"{print $2}' "$S/kit/toolchain.pin")-$(awk '$1=="commit"{print $2}' "$S/kit/toolchain.pin")
 # the checkout build/ is in, taken logically: build/ may be a link into an installed toolchain

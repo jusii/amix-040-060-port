@@ -114,10 +114,10 @@ Its gates:
 
 ## The module kernel (2026-10-26)
 
-The k46 module kernel (amix-dlm's stage-3 kernel plan) carries the module core, spliced in by
+The k46 module kernel carries the module core, spliced in by
 `relink-040-dlm.sh`. kinfo and rth1 are built for it with `DLM=1`:
 
-- **kinfo** (`-DKINFO_DLM`). The kabi tag is `k46.1.3` (`k46.1.0` before stage 4, `k46.1.1` in the cuts of 2026-10-26, `k46.1.2` through the
+- **kinfo** (`-DKINFO_DLM`). The kabi tag is `k46.1.3` (`k46.1.0` in the first module kernels, `k46.1.1` in the cuts of 2026-10-26, `k46.1.2` through the
   cut -51) (`KINFO_KABI` overrides; it must equal `relink-040-dlm.sh`'s `DLM_KABI`). Every `read(2)` refreshes
   the module list (count at 576, entries from 580) from the core's `dlm_kinfo_list()`, with up to 32 entries,
   and sets the length (580 + 32 × n) and the check to match. Without `KINFO_DLM` the object is the static kernel's, byte for byte.

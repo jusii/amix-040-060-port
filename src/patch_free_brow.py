@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # patch_free_brow.py -- free the stock RAM disk's block row, bdevsw[20], for the module ramdisk
-# (amix-dlm stage 4; core patch 0031's block rows; 2026-10-26).  Run by relink-040-dlm.sh on a
+# (amix-dlm core patch 0031's block rows; 2026-10-26).  Run by relink-040-dlm.sh on a
 # module kernel of kabi k46.1.1 or later.
 #
 # A block row is free for a module when every routine is nodev and no flag is set (the core's
