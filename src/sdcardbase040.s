@@ -1,5 +1,5 @@
 | sdcardbase040.s -- sdcardbase(card): the physical AutoConfig base sd's init() recorded for a
-| card (PO-04, 2026-09-28).
+| card (2026-09-28).
 |
 | The a4091 driver maps each board's register pages from this (dev_kvmap, NCS) instead of from
 | a fixed address, so one queue function can drive whichever board autocon() found.  The stock

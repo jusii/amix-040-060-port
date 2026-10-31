@@ -1,6 +1,6 @@
 #!/bin/sh
 # relink-040-ddcensus.sh -- DIAGNOSTIC ONLY: a census of disk requests whose buffer crosses a page,
-# split by identity region vs kvseg, with a ring of the kvseg ones (2026-10-03, P-15 DI-1 follow-up).
+# split by identity region vs kvseg, with a ring of the kvseg ones (2026-10-03, a follow-up to the misplaced-write analysis).
 #
 #   *** NEVER IN A SHIPPING CHAIN (K1, KD060-Z or any released family).  It exists to make the
 #   *** positive statement "zero kvseg buffers straddled scattered frames" on the rig and the

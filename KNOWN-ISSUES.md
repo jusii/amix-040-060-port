@@ -6004,7 +6004,7 @@ The cascade clears bits 7, 5, 4, 2 and 0 on every page it hands out, so:
 * `smu_b0_20` ≈ 3539 with 149 others → the free population is clean and the allocated one is not;
 * `smu_b0_ff` large → a fill, and the story is memory corruption after all.
 
-**Deliberately not yet built: the standalone write-watch.** It was the agreed next step while the
+**Deliberately not yet built: the standalone write-watch.** It was the planned next step while the
 target looked like one fixed address. A watch on one address is the wrong instrument for an
 anomaly spanning 149 of them, and it would cost a boot to learn that. The histogram costs no new
 machinery and narrows the target first; if it comes back "targeted after all", the watch follows
@@ -6139,7 +6139,7 @@ read-back-verify wrapper on the cascade rather than a write-watch.
 
 ### ✅ RESOLVED 2026-08-21 — it was not a kernel defect
 
-The host-harness handover above was dispatched and the reproduction confirmed it: **the
+The host-harness reproduction described above was run and confirmed it: **the
 accelerator's 68040 emulation core mishandled bitfield operations**, executing them through the
 030 accessors, so `BFINS` to an MMU-translated address did not take effect while `ORI.B`/`ANDI.B`
 to the same byte did. Fixed in the firmware (`6e8e33a`) and **validated on metal 2026-08-21
@@ -6740,7 +6740,7 @@ left equal to the SSP). PID 1's launch RTE worked (it reached `0x80800000` and r
 return did not. That relocates the bug to how the syscall/exece return builds the user context
 (kernel) or how the RTE-from-syscall restores USP (emulator).
 
-#### HANDOVER — firmware-side capture of the user-drop RTEs (no `.data` race)
+#### Next instrument — firmware-side capture of the user-drop RTEs (no `.data` race)
 
 For the accelerator's 68040 core. The kernel-side `srt` ring reads the same answer but is trapped
 behind the `.data`/reboot timing; the emulator can print it to serial the instant it happens.
@@ -6870,7 +6870,7 @@ taken. Counters `kzr_calls`, `kzr_fail_n`, `kzr_last_addr` and `kzr_alien_n` sit
 `kzr_magic` (`"KZR!"`). The relink weakens the stock `kzero` and links ours; its HARD CHECK
 requires `kzero` off `0x302`, `bzero` still at `0x302`, one strong `kzero` and the counters.
 
-**Verified (emulation, row N219m, two boots by `kbootset`).** Test kernel `68060-261030-50`, unix
+**Verified (emulation, an A4000 with a 68060, two boots by `kbootset`).** Test kernel `68060-261030-50`, unix
 sha256 `1f98f683…` (2 419 461 bytes), kabi k46.1.3, ufs module rebuilt for it (`c939f2fb…`). All
 nine cases, the three that panicked on `-61` among them, return 0 with size M, `[0,M)` intact and,
 after regrowing to N, `[M, N-1)` zero; the box stays up.
@@ -6935,7 +6935,7 @@ the modules `e1d632f5…` (`-50`) and `53fb173e…` (`-61`). The test kernel is 
 `1f98f683…` (`68060-261030-50`, unchanged) with ufs `e1d632f5…`; the build id does not tell the two
 `-50` ufs modules apart, the sha does.
 
-**Verified (emulation, row N219m, two boots by `kbootset`).** The ufs sha read back from the
+**Verified (emulation, an A4000 with a 68060, two boots by `kbootset`).** The ufs sha read back from the
 installed generation. k30's quirk-91 probes, judged by its `qzeval.py`: `probe.sh` warm on the root
 ×3, a fresh ufs on `c5d0s1` with `probe.sh` remount ×2 and `probe7.sh` cold ×4 — **68 runs, 68
 clean**; `fsck -n` clean. ftshrink, the eight shapes above ×2: all regrow to zeros. The nine
@@ -6984,7 +6984,7 @@ by symbol; no byte of `.text` moves. relink-040.sh's HARD CHECK wants:
 `tools/status-facts.sh` fails a kernel without the guard unless `STATUS_ALLOW_NO_FREEQ_GUARD=1` is
 set. `FREEQ_GUARD=0` on -51's recipe at `fff9660` gives -51's seven sums, byte for byte.
 
-**Verified (emulation, row N219m: A4000, 68060, 16 MB Unix memory, 15 MB swap).** k30's trigger
+**Verified (emulation: A4000, 68060, 16 MB Unix memory, 15 MB swap).** k30's trigger
 ran 150 rounds a phase and the fqg block was read by `adb` every 90 s.
 - **Guarded.** The test kernel `68060-261031-51` (-51 with the guard linked onto its base), 6
   runs, and the cut `68060-261031-52`, 1 run. In 2 of the experiment runs a held 5 MB `dd` buffer
@@ -9644,8 +9644,8 @@ then falls through to the normal range check and returns `EINVAL` like every oth
 A patcher would assert the ten bytes `0c92 fffe 1dc0 6600 0014` at `.text 0x44fda` first.
 **Deliberately not done** (owner's decision, 2026-09-26).
 
-**On `driver-line` it is done, and that is a deliberate difference from this tree** (that line's
-owner, 2026-09-28). `src/patch_setuid_hook.py` makes exactly the edit above, after asserting the ten
+**On `driver-line` it is done, and that is a deliberate difference from this tree**
+(2026-09-28). `src/patch_setuid_hook.py` makes exactly the edit above, after asserting the ten
 bytes and deriving the site from `setuid`'s symbol. `relink-040-fpe.sh` runs it, the last link of
 every kernel that line ships, and `--check` reports whether a kernel still has the hook.
 
@@ -10285,7 +10285,7 @@ from the unpatched one in exactly that byte and the build-id stamp. **Not exerci
 here**, because no board in this machine has such an id. That the low-id path is unchanged follows
 from the instruction semantics, not from a run.
 
-## ⚠ DRIVER-LINE-1 (2026-09-28, RECORDED — owner decision pending): dd's REQUEST SENSE buffer shares a cache line with the next unit
+## ⚠ DRIVER-LINE-1 (2026-09-28, RECORDED — not fixed; resolution options below): dd's REQUEST SENSE buffer shares a cache line with the next unit
 
 Numbered outside the `ISSUE-NN` series on purpose. That series is upstream's, and a number
 taken here could collide with the next one assigned there.
@@ -10305,7 +10305,7 @@ Antti's D42 service (`dma_prepare`/`dma_complete`) does neither for edge lines. 
 in `edge_shared`, whose acceptance value is 0, so every sense read on these controllers will show
 up there. The counter names the problem; it does not solve it.
 
-**Resolution options (owner decision pending):** a driver-owned, line-aligned bounce buffer for
+**Resolution options (none chosen):** a driver-owned, line-aligned bounce buffer for
 sense data, or a line-aligned sense buffer in place of `dp->sense`. Until then, a nonzero
 `edge_shared` on a sense-heavy run is this entry, not a new defect.
 
@@ -10326,7 +10326,7 @@ sense data, or a line-aligned sense buffer in place of `dp->sense`. Until then, 
 
 None of this is adapted on this line. It goes back to the contract's author.
 
-**2026-09-29, resolved for the A4091 by the bounce** (owner's choice; amix-a4091 `fa8732a`, A4-18;
+**2026-09-29, resolved for the A4091 by the bounce** (amix-a4091 `fa8732a`;
 `relink-040-a4091.sh` defaults to it). The 040/060 arm sends a misaligned `FROM_DEVICE` transfer of
 up to 1 KB through a static 16-byte-aligned buffer and copies it out after `dma_complete`. That covers
 every dd sense read and every short GSIO read. A longer misaligned read is refused with status
@@ -10438,7 +10438,7 @@ nrcvd 150, maxgdp 24, nrduser 250).
 - The three libgcc helpers it imports come from the toolchain's own `libgcc.a`, and each scans
   CLEAN.
 
-**Not proven here:** that the result mounts an ISO. That is a boot cell (DL-05) and belongs to
+**Not proven here:** that the result mounts an ISO. That is a boot cell and belongs to
 amix-kerntools.
 
 ## ✅ DRIVER-LINE-4 (2026-10-02, FIXED in the a4091 pass, HARDWARE-ACCEPTED 2026-10-05 on the A4000D; upstream's record is ISSUE-76): stock `autocon()` cannot find a board whose AutoConfig manufacturer is ≥ 0x8000
@@ -10487,7 +10487,7 @@ evidence ISSUE-76 lacks:
   `a4091_kstat.attached` = 1.
 - A `cdfs` mount of a ZuluSCSI CD image at 1,3 read 4 of 4 packages with exact checksums. The DMA
   record showed 9841 `FROM_DEVICE` transfers, prepared and completed, with 0 mismatches and 0 errors.
-- A full install from that CD completed (review board T-29).
+- A full install from that CD completed.
 
 ## ⚠ DRIVER-LINE-5 (2026-10-03, RECORDED, AMENDED the same day — stale page constants, correct but narrow; context for DI-1): disk I/O above 4 KiB still goes out in 2 KiB pieces, on the raw path AND the block path
 
@@ -10529,7 +10529,7 @@ reference (`usl-svr42` `common/uts/io/predki.c`: `fix_bswtbl`, `gen_strategy`; `
 - (amix-a4091's `a3091.c.patch` commentary says `amiga_dma_pageio` "chunks every block/raw disk ...
   transfer to a page". On this line both breakups chunk to half a page.)
 
-**Why it matters (DI-1, P-15).** A disk on the Z3660 got one 2 KiB piece of an 8 KiB inode block
+**Why it matters (DI-1).** A disk on the Z3660 got one 2 KiB piece of an 8 KiB inode block
 replaced by the next piece's data. Pieces 1, 3 and 4 were correct.
 - UFS's own `bwrite` of that block goes out as four consecutive 2 KiB requests (above), and so
   does a raw writer.
@@ -10630,7 +10630,7 @@ digit of `bo_name`.
   | cell | case | result |
   |---|---|---|
   | 1 | old loader + new kernel | `built in (no record)`, root `c6d0s1`, as today |
-  | 2 | new + new, booted from the A3000 SCSI | record BOOT\|BMOBO; no motherboard controller registered (AGA: W-D7 skips it), so `built in (controller not present)` and `c6d0s1` |
+  | 2 | new + new, booted from the A3000 SCSI | record BOOT\|BMOBO; no motherboard controller registered (AGA: the support probe skips it), so `built in (controller not present)` and `c6d0s1` |
   | 3 | root record, Z3660 unit 6 | `from the root record`, `c6d0s1` |
   | 4 | root record, Z3660 unit 3, disk moved there | `c3d0s1` / `c3d0s2`, multiuser |
   | 5 | root record naming the empty Z3660 unit 2 | `RTH1: root c2d0s1 from the root record ...`, then `vfs_mountroot` fails: no fallback |
@@ -10639,15 +10639,14 @@ digit of `bo_name`.
   | 8 | the A4091 boots its own disk, unit 6 (BOOT\|BCDEV, board 0x48000000) | `from the boot disk`, `ced0s1` |
   | 9 | as 8, the disk moved to unit 2 | `cad0s1`, multiuser |
 
-  Cells, logs and decoded dumps are in workspace `tmp/2026-10-05-rootdev-hint/impl/`.
 - **Not verified:** metal.
 
-## ✅ DRIVER-LINE-7 (2026-10-05, a stock defect: FIXED, default in `relink-040-fpe.sh` step 8.6 and in the r6 card set by the owner's decision; EMU-proven by dump; HW not run): `ttcompatopen()` leaves the state the ioctl-ack path trusts uninitialised, so a console stream can panic the kernel at boot with `ttcompat: unexpected ioctl acknowledgment`
+## ✅ DRIVER-LINE-7 (2026-10-05, a stock defect: FIXED, default in `relink-040-fpe.sh` step 8.6 and in the r6 card set; EMU-proven by dump; HW not run): `ttcompatopen()` leaves the state the ioctl-ack path trusts uninitialised, so a console stream can panic the kernel at boot with `ttcompat: unexpected ioctl acknowledgment`
 
 **Symptom.** Rarely, about 70 s into a boot, right after "The system is ready" and the hostname line:
 `PANIC: ttcompat: unexpected ioctl acknowledgment`. The backtrace is `ioctl → strioctl → strdoioctl →
 runqueues → ldtermrsrv → ldterm_ioctl_reply → putnext → ttcompat_ioctl_ack → panic`. It was seen four times on
-the emulated 060 (A3000 + Z3660, rig row E5), in kernels on both sides of upstream's `8f272c1`, and with and
+the emulated 060 (A3000 + Z3660), in kernels on both sides of upstream's `8f272c1`, and with and
 without RTH1.
 
 **The mechanism, from the stock code and from two dumps.**
@@ -10681,7 +10680,7 @@ without RTH1.
 - Same length, no relocation in the span, no layout change. Found by symbol; asserts the stock bytes;
   idempotent; has a `--check` mode.
 - Everything cleared before is still cleared.
-- **Default since r6** (owner's decision, 2026-10-05):
+- **Default since r6** (2026-10-05):
   - The fpe pass is the last link of every 040/060 kernel and stamps the build id, so no kernel of this line
     is cut without the fix by accident.
   - `TTCOMPAT_INIT=0` is the deliberate opt-out, which reproduces a pre-r6 image.
@@ -10698,7 +10697,7 @@ without RTH1.
   - unfixed: three console streams with `TS_IOCWAIT` set in leftover state;
   - fixed: `t_state 0` on every ttcompat stream; the only nonzero `t_iocid`/`t_ioccmd` is the telnet pty's,
     which ttcompat itself recorded for a BSD ioctl it handled.
-- **Stress at load** (E5, no typing, 2026-10-05): r6 KD060-Z unfixed **2/100** panics vs fixed **0/100**.
+- **Stress at load** (A3000 + Z3660, no typing, 2026-10-05): r6 KD060-Z unfixed **2/100** panics vs fixed **0/100**.
   - Both unfixed panics were dumped with the same leftover console-stream state (8 / 0x10 / 0x10) as the
     earlier two.
   - Not decisive alone (p ≈ 0.25); the dumps are the deterministic part.
@@ -10706,11 +10705,11 @@ without RTH1.
   land in the next `ttcompatopen` allocation on this allocator: a held-open pty's state read 0/0/0.
 - **Not verified:** metal.
 
-## ⚠ DRIVER-LINE-8 (2026-10-06, a stock defect: FIXED in r6 by the owner's decision (Q-6.1), default in `relink-040-fpe.sh` step 0.6; host-proven, no EMU regression; the deadlock did NOT reproduce in 25 unfixed runs (14 I3-shape installs, 11 synthetic), so the fix rests on the mechanism, not on a tally; HW not run): `page_get()` keeps no reserve, so pageout can wait forever for the page its own push needs
+## ⚠ DRIVER-LINE-8 (2026-10-06, a stock defect: FIXED in r6 (2026-10-06), default in `relink-040-fpe.sh` step 0.6; host-proven, no EMU regression; the deadlock did NOT reproduce in 25 unfixed runs (14 installs of that shape, 11 synthetic), so the fix rests on the mechanism, not on a tally; HW not run): `page_get()` keeps no reserve, so pageout can wait forever for the page its own push needs
 
 **Symptom.** An interactive install on the 32 MB rig stopped at `apkg install (11 packages)`: no disk write
-for 58 minutes, the console still echoing, Ctrl-C ignored (installng's I3 cell, 2026-10-06; the re-run with
-the same media completed in 1080 s). The savestate (`tmp/2026-10-06-r6/k1cells/I3-HANG.md`):
+for 58 minutes, the console still echoing, Ctrl-C ignored (an installng test install, 2026-10-06; the re-run with
+the same media completed in 1080 s). The savestate of the hang shows:
 - `freemem` 0, `freemem_wait` 3; pageout, fsflush and apkg all asleep on `&freemem` at priority 2 (below
   PZERO, hence no Ctrl-C);
 - **pageout's own stack:** `page_get ← segkmem_alloc ← sptalloc ← kmem_alloc ← kmem_zalloc ← getfreeblk ←
@@ -10752,7 +10751,7 @@ threshold), and kernel memory is exempt (`seg_kmem.c` passes `P_NORESOURCELIM`),
   can still reach the last pages, as before.
 - **Gates:** exact import/export sets, no `.rodata`, no COMMON, scan060 CLEAN, both SR writes present
   (`-traditional` can drop an asm), the sites asserted and re-checked, `check_relink_relocs` 0 complaints.
-- **Default since r6** (owner's decision Q-6.1, 2026-10-06): `relink-040-fpe.sh` runs the pass in its step 0.6,
+- **Default since r6** (2026-10-06): `relink-040-fpe.sh` runs the pass in its step 0.6,
   before its own link, in the order `… → rth1 → ttcompat → pgrsv → isp060 → fpe`, and re-checks the sites
   after the link (step 8.7). `PGRSV=0` is the deliberate opt-out; the explicit pass stays, and fpe then
   reports `[skip]`.
@@ -10796,11 +10795,11 @@ threshold), and kernel memory is exempt (`seg_kmem.c` passes `P_NORESOURCELIM`),
   the reserve doing its job: ordinary consumers stop at 20 free pages and kernel memory keeps them.
 - **Not verified:** metal. 128 MB metal has never shown the hang; it is a small-memory failure.
 
-## ✅ DRIVER-LINE-9 (2026-10-06, FIXED in r6 by the owner's decision (Q-6.1), default in `relink-040-fpe.sh` step 0.6; EMU-proven against a 68030; HW-proven 2026-10-11 on a full 68060 on the Z3660): on the 68060, every unimplemented-integer form `isp61_vec` declines kills the process, the 64-bit divides among them
+## ✅ DRIVER-LINE-9 (2026-10-06, FIXED in r6 (2026-10-06), default in `relink-040-fpe.sh` step 0.6; EMU-proven against a 68030; HW-proven 2026-10-11 on a full 68060 on the Z3660): on the 68060, every unimplemented-integer form `isp61_vec` declines kills the process, the 64-bit divides among them
 
 **Symptom.** On the 68060 the July APKGENG 1.12.0 (`fb2f08f4`, the one live on pkg.amigaux.org) cannot
-upgrade itself: its `installf -f`, `pkgchk` and `pkgadd` are `Killed (137)` (installng,
-`tmp/2026-10-05-r6/engine-upgrade/RESULT.md`). The cause is vector 61. `installf` holds a
+upgrade itself: its `installf -f`, `pkgchk` and `pkgadd` are `Killed (137)` (installng's
+engine-upgrade run). The cause is vector 61. `installf` holds a
 `divs.l (16,%fp),%d2:%d1` — a 64-bit dividend from memory, in its hashing — and `isp61_vec` accepts only
 the 64-bit *multiplies* the 2026-08 census found (`#imm`, `Dn`, `(An)`, `(d16,An)`). Every other form ends
 at `nullvect`, which sends SIGKILL. The forms that die: `divs.l`/`divu.l` with a 64-bit dividend (any EA),
@@ -10833,15 +10832,15 @@ misaligned `cas`.
   the hook asserted and re-checked, `check_relink_relocs` 0 complaints. scan060 of the package reports one
   candidate, a data word (`0x010a`, decoded as `movepw`) inside the image's 16-bit offset table at package
   `.text` 0x5e4; the pass allows exactly that hit, pinned by its neighbours' bytes.
-- **Default since r6** (owner's decision Q-6.1, 2026-10-06): `relink-040-fpe.sh` runs the pass in its step 0.6,
+- **Default since r6** (2026-10-06): `relink-040-fpe.sh` runs the pass in its step 0.6,
   after the page-out reserve and before its own link (`… → ttcompat → pgrsv → isp060 → fpe`), and
   re-checks the hook after the link (step 8.7). `ISP060=0` is the deliberate opt-out; the explicit pass
   stays, and fpe then reports `[skip]`. See DRIVER-LINE-8 for the byte-for-byte proof of both.
 - `tools/test-isp060.sh`: the package build and its gates; with a built kernel, `--check`, an idempotent
   second patch (byte-identical), and a refusal of a base without the package.
 
-**Verified (EMU, 2026-10-06; the r6 KD060-Z chain with the pass vs without; the 68030 reference is the E1
-rig's stock kernel):**
+**Verified (EMU, 2026-10-06; the r6 KD060-Z chain with the pass vs without; the 68030 reference is an
+emulated 68030's stock kernel):**
 - **Probe set** (`isp060probe`, every form above in a child process each, at `-O0`, `-O`, `-O2`):
   - without the pass every case is SIGKILLed;
   - with it, 370 of 370 result lines equal the 68030's once the condition-code bits the M68000 PRM leaves
@@ -10864,11 +10863,11 @@ rig's stock kernel):**
   A4000T's Z3660, the installed r6e system, kernel KD060-Z `68060-261006-83` (sha256 `1d4771b5…`,
   `sum -r` 55171; `--check` confirms the hook). `isp060probe`: 369/369 lines identical to the EMU
   reference with the pass, 0 killed; `isp61_unsupported_n` 1 → 0x65; zero divide and `chk2` out of
-  bounds → SIGFPE, `cas2` → SIGSEGV, as designed. Run by the Z3660 station.
+  bounds → SIGFPE, `cas2` → SIGSEGV, as designed. Run on the Z3660.
 - Performance: an emulated form costs a trap plus copyin-based operand reads, so a binary dense in
   declined forms runs visibly slower than with `isp61`'s fast path.
 
-## ✅ DRIVER-LINE-10 (2026-10-21, a stock defect: FIXED, default in `relink-040-fpe.sh` step 8.8 by the owner's decision D11; HW-proven on the A4000D by a live /dev/kmem write before the build-time fix): TCP's lower read queue holds 4096 bytes, so IP frees the 4th and later full-size segments of every burst, and counts none of them
+## ✅ DRIVER-LINE-10 (2026-10-21, a stock defect: FIXED, default in `relink-040-fpe.sh` step 8.8 since 2026-10-21; HW-proven on the A4000D by a live /dev/kmem write before the build-time fix): TCP's lower read queue holds 4096 bytes, so IP frees the 4th and later full-size segments of every burst, and counts none of them
 
 **Symptom.** A 4 MiB FTP push into a Z3660 box ran at 25-30 KB/s (pull: about 600 KB/s) on both
 benches, with 300-400 sender retransmissions, each one after a 200 ms timeout. The firmware and the

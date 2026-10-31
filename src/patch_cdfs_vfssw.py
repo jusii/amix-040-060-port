@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # patch_cdfs_vfssw.py -- give RFS's vfssw row to cdfs, and guard rfsys, by three relocation
-# retargets (2026-10-02, PO-02).  Run by relink-040-cdfs.sh after its link; src/cdfs_glue040.s
+# retargets (2026-10-02).  Run by relink-040-cdfs.sh after its link; src/cdfs_glue040.s
 # explains the row and the guard, KNOWN-ISSUES DRIVER-LINE-3 records the proof.
 #
 #   .rela.data  vfssw+0x40  row 4 vsw_name   "rfs" (local string)  -> cdfs_vsw_name

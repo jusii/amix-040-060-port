@@ -13,7 +13,7 @@
  *
  * Built with -DRTH1_DLM (the module kernel, relink-040-rth1.sh with DLM=1), rth1_mountroot() also
  * calls the module core's dlm_marc_post() once the root is mounted: the boot-class modules of the
- * booted generation load there, in process 0 (amix-dlm stage-3 kernel brief, step 8).  Before
+ * booted generation load there, in process 0 (amix-dlm stage-3 kernel plan, step 8).  Before
  * rth1_apply() it calls rth1_nomarc() (src/rth1_tail040.s, empty): relink-040-dlm.sh retargets that
  * call to the core's dlm_marc_root() when the core has it (spec 30 section 3), so the arena's root
  * modules link, and their controllers register with sd, before sd's first open.

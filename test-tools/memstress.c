@@ -1,4 +1,4 @@
-/* memstress.c -- THROWAWAY guest load for the page-out reserve proof (2026-10-06, port station).
+/* memstress.c -- THROWAWAY guest load for the page-out reserve proof (2026-10-06).
  * Reproduces the I3 low-memory deadlock shape on a 32 MB AMIX: page cache flooded by read(2) of a big file,
  * dirty file pages from MAP_SHARED stores into a large file (pageout must push them through ufs_putpage ->
  * ufs_bmap -> bread of an indirect block -> buffer-cache growth), and dirty pages from write(2) of mixed sizes.

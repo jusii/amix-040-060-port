@@ -1,11 +1,11 @@
-| cdfs_glue040.s -- what relink-040-cdfs.sh links beside amix-cdfs's libcdfskern.o (2026-10-02,
-| PO-02).
+| cdfs_glue040.s -- what relink-040-cdfs.sh links beside amix-cdfs's libcdfskern.o
+| (2026-10-02).
 |
 | THE ROW.  The kernel's vfssw[] is a 12-row static table, and nfstype cannot grow in a binary
-| relink, so cdfs takes a row that exists: RFS's, row 4 (D44).  src/patch_cdfs_vfssw.py retargets
+| relink, so cdfs takes a row that exists: RFS's, row 4.  src/patch_cdfs_vfssw.py retargets
 | that row's two relocations -- its name to cdfs_vsw_name below, its init from rf_init to
 | cdfsinit -- and asserts first that nothing in the kernel reaches row 4 except by walking the
-| table or by a filesystem-type number taken from a mounted vfs (the PO-02 proof, recorded in
+| table or by a filesystem-type number taken from a mounted vfs (the vfssw-row proof, recorded in
 | KNOWN-ISSUES DRIVER-LINE-3).  cdfsinit finds its row by the name "cdfs" (amix-cdfs,
 | platform/amix-kernel/cdfs_vfsops.c), so the name is the interface.
 |

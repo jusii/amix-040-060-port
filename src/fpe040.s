@@ -100,7 +100,7 @@
 	.globl	fpe_vec11
 fpe_vec11:
 | ---- THE CENSUS, ahead of every gate (round 4 fix 5) --------------------------------------
-| fpe_fmt2_n used to sit BELOW the fpu_present decline, and every 68040 in this workspace's
+| fpe_fmt2_n used to sit BELOW the fpu_present decline, and every 68040 in the project's
 | bench and metal fleet has an FPU -- so on the only kind of 040 available the lane never armed
 | and the counter could never move.  FPE-GLUE-DESIGN.md 9 item 10 was therefore not merely 0,
 | it was unreachable, and contract 8 item 2's standing gap (the format-2/0x202c pairing rests on

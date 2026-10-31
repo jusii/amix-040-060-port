@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""frame-floppy-040.py -- frame a kernel of this line into a bootable 880 KB DF0 floppy (2026-10-02,
-P-15 P3 / KT-16).
+"""frame-floppy-040.py -- frame a kernel of this line into a bootable 880 KB DF0 floppy
+(2026-10-02).
 
 WHY THE STOCK FLOPPY CANNOT BOOT A 68040/68060 KERNEL.  The AMIX 2.1 boot floppy is the same chain
 as a boot slice, laid at offset 0 of the disk:

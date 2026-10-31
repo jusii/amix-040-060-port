@@ -4,7 +4,7 @@ Round 8 gave the length law its first **non-vacuous** metal reading and it faile
 row: `fpe_advmiss_n = 201` over 662,248 emulated instructions (`fpe_advctl_n = 220,593`,
 `fpe_advnofetch_n = 0`), against the round-5 bench claim of **0 over 11,655,653**. Every FP
 result in the same session was exact. The metal record is
-`Amix/tmp/2026-08-27-fpe-metal-r8/RESULTS.md`, Finding 1.
+round 8's results, Finding 1.
 
 This document settles defect-versus-designed-fallback by **static analysis only**. No boot, no
 bench run, no behavioural change: it answers the four questions, gives the verdict, and registers
@@ -291,7 +291,7 @@ emulator a Motorola-built frame whose Next PC is already correct.
 > **ANNOTATION (round 10, 2026-08-27).** *They were read, and they were non-zero.*
 > `f60_effadd_n` 0 → 3 on real 68LC060 silicon, one per execution of the extended and packed
 > immediates, each ending in SIGSYS with the whole `fpe_*` block unmoved
-> (`Amix/tmp/2026-08-27-fpe-workload/RESULTS.md`, Finding 1). This section's "silent hole" is
+> (the round-10 workload results, Finding 1). This section's "silent hole" is
 > therefore measured rather than hypothetical, and round 10 closed it. **The candidate fix
 > sketched above was tried and rejected** for three reasons found while implementing it: it is an
 > unbreakable loop, because `fpe_vec11`'s own decline reaches `fpsp_vec11` → the package →

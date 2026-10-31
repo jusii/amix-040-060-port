@@ -781,7 +781,7 @@ argued and never tested.
 round 4 fixed them (`FPE-R4-DELTA.md`), and round 5 re-scored the list. Each row below carries a
 one-line pointer to the number it finally got; the rows themselves are **not** rewritten, because a
 registration is a record of what was asked for and not of what came back. The evidence for every
-round-5 pointer is `Amix/tmp/2026-08-27-fpe-r5/RESULTS.md`.
+round-5 pointer is round 5's results record.
 
 1. **The exec/sendsig `fpu_setup` gap (§6.3).** Highest-value follow-up. Reading: exec a program
    that sets a distinctive FPCR and fp0 pattern, exec another, read `fpu_info` through /proc. The

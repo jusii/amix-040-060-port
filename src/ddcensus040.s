@@ -1,5 +1,5 @@
 | ddcensus040.s -- DIAGNOSTIC ONLY: a census of disk requests whose buffer crosses a page, taken
-| where the buffer's virtual address is still known (2026-10-03, P-15 DI-1 follow-up).
+| where the buffer's virtual address is still known (2026-10-03, after the misplaced-write analysis).
 |
 | NEVER IN A SHIPPING CHAIN.  relink-040-ddcensus.sh says so too; kerntools builds a separate
 | diagnostic chain for the rig and the Bench.

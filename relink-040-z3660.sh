@@ -46,7 +46,7 @@ sh "$HERE/src/mk_modelb_sysroot.sh" | sed 's/^/      /'
 AMIX_SYSROOT="$HERE/build/sysroot-modelb"
 export AMIX_SYSROOT
 
-# The SCSI driver's revision is pinned (PO-11, 2026-09-28): 53f43bd is ZS-03, whose machine gate
+# The SCSI driver's revision is pinned (2026-09-28): 53f43bd, whose machine gate
 # reads the Agnus id's low nibble, so an NTSC ECS machine is no longer taken for AGA.  Built through
 # this pass it gives z3660_040.o sha256 277a5b53... (was 6c347e25 at 16ca1a8).
 Z3660_SCSI_REV="${Z3660_SCSI_REV-53f43bd}"
@@ -65,7 +65,7 @@ else
 fi
 sha256sum "$Z3660_SCSI_SRC" | sed 's/^/      /'
 
-# The ethernet driver's revision is pinned the same way (PO-12): 8449d53 is the source of 586ba6f
+# The ethernet driver's revision is pinned the same way: 8449d53 is the source of 586ba6f
 # (real spl masks, and a failed MAC probe frees both sptalloc windows -- 47092ee leaked them), plus
 # notes.  Through this pass it gives z3660eth_040.o sha256 a1f49c54... (was b93ce42d at 47092ee).
 Z3660_NET="${Z3660_NET-on}"
@@ -132,13 +132,13 @@ for o in z3660_040 ${NETO:+z3660eth_040}; do
 done
 echo "[OK] both driver objects shift by 12 (4 KiB PFN), none by 11"
 
-# T-9 (2026-09-28): -traditional makes the stock <sys/types.h> define `volatile` away, and gcc
+# 2026-09-28: -traditional makes the stock <sys/types.h> define `volatile` away, and gcc
 # then deletes every spl()/splx() whose output is unused and every MMIO `volatile`.  The toolchain
 # passes -Dvolatile=__volatile__ now; tools/spl-gate.py proves it for this object: G1 = the macro
 # dump keeps `volatile`, G2 = every function that calls spl writes %sr (per function).
 # Both units are held to G2 with no allowance: z3660eth's spl macros expand to the real spl6/splx
 # since amix-z3660net 47092ee.  No --macro either -- the preprocessed call is already counted.
-echo "[*] T-9 gates G1/G2 (spl masks and MMIO volatile survived -traditional)"
+echo "[*] spl gates G1/G2 (spl masks and MMIO volatile survived -traditional)"
 run_step all python3 "$HERE/tools/spl-gate.py" --object "$HERE/build/z3660_040.o" \
 	--source "$HERE/build/z3660_040.c" --cflags "$CF" -- -I"$ALIEN" -I"$HERE/build"
 [ -z "$NETO" ] || run_step all python3 "$HERE/tools/spl-gate.py" --object "$NETO" \

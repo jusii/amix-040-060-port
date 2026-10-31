@@ -114,10 +114,10 @@ Its gates:
 
 ## The module kernel (2026-10-26)
 
-The k46 module kernel (amix-dlm stage-3 kernel brief, S3-20) carries the module core, spliced in by
+The k46 module kernel (amix-dlm's stage-3 kernel plan) carries the module core, spliced in by
 `relink-040-dlm.sh`. kinfo and rth1 are built for it with `DLM=1`:
 
-- **kinfo** (`-DKINFO_DLM`). The kabi tag is `k46.1.3` (`k46.1.0` before stage 4, `k46.1.1` at S4-21/S4-22, `k46.1.2` through the
+- **kinfo** (`-DKINFO_DLM`). The kabi tag is `k46.1.3` (`k46.1.0` before stage 4, `k46.1.1` in the cuts of 2026-10-26, `k46.1.2` through the
   cut -51) (`KINFO_KABI` overrides; it must equal `relink-040-dlm.sh`'s `DLM_KABI`). Every `read(2)` refreshes
   the module list (count at 576, entries from 580) from the core's `dlm_kinfo_list()`, with up to 32 entries,
   and sets the length (580 + 32 × n) and the check to match. Without `KINFO_DLM` the object is the static kernel's, byte for byte.
@@ -129,9 +129,9 @@ The k46 module kernel (amix-dlm stage-3 kernel brief, S3-20) carries the module 
 The chain leaves z3660eth, zz9000 and monsw out (majors 49, 51 and 52 belong to modules):
 
     dd -> z3660 (Z3660_NET=off) -> f4arms -> f6 -> rth1 (DLM=1) -> kinfo (DLM=1) -> dlm -> fpe
-       -> [kerntools sddevsize, W-D7] -> relink-040-dlm.sh --fill -> [emit]
+       -> [kerntools sddevsize, the support probe] -> relink-040-dlm.sh --fill -> [emit]
 
-- `--fill` runs after the W-D7 inject, which grows `.text`, and before emit, which only patches `.data` words.
+- `--fill` runs after the support-probe inject, which grows `.text`, and before emit, which only patches `.data` words.
   It also takes the fingerprint: amix-dlm's `tools/mkabi.py --check` against `abi/k46/abi-<kabi>.txt`
   (C3-3 §4). A fingerprint that moved fails the build; `DLM_ABI_NEW=1` writes the new text instead, for the
   one rewrite of a tag's reference that C3-3 allows.
@@ -147,7 +147,7 @@ The chain leaves z3660eth, zz9000 and monsw out (majors 49, 51 and 52 belong to 
   - after them, `rth1=2` (C2-3 version 9) when the image's `src/rth1.c` matches a motherboard controller's
     record by its id (amix-dlm C4-1 section 5.2; the image has `rth1_moboid`), on any kernel.
 
-**The cut without ufs and s5 (2026-10-27, amix-dlm S5-11).** `relink-040-carve.sh` runs first, on
+**The cut without ufs and s5 (2026-10-27).** `relink-040-carve.sh` runs first, on
 `relink-040.sh`'s output, before any pass that branches across the ranges. ufs and s5 become dead and
 zeroed in place, so no address moves: `vfssw` loses their rows (`nfstype` 10), `init_tbl` loses
 `inoinit`, the relocations inside the ranges go, and every symbol defined there leaves the symbol table

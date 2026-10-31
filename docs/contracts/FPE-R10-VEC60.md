@@ -1,6 +1,6 @@
 # FPE round 10 — the vector-60 SIGSYS: where it comes from, and the arm that closes it
 
-Round 10's metal workload (2026-08-27, `Amix/tmp/2026-08-27-fpe-workload/RESULTS.md`) put
+Round 10's metal workload (2026-08-27) put
 1,057,900 emulated instructions through the FPE kernel `68060-260827-61` on the real 68LC060 and
 found **exactly two instruction forms that die**, both of them the same case twice:
 
@@ -307,7 +307,7 @@ this changes nothing that has ever been measured; it changes what happens the fi
 > `fpe_undecoded_n` **and** `fpe_rewind_n` both unmoved, because that refusal is issued by the glue
 > (§5.2) before the emulator is called at all. One event moved the pair, the other moved neither,
 > and the two ran three minutes apart on the same boot.
-> Evidence: `Amix/tmp/2026-08-27-fpe-r11-metal/RESULTS.md` §7 and its counter table.
+> Evidence: round 11's metal results, §7 and its counter table.
 
 ---
 
@@ -1170,7 +1170,7 @@ entries:
 against 9.4, and compared with the reviewed round-12 artifact:
 
 ```
-unix-040-fpe-r12 (reviewed, 9.4)  ->  unix-040-fpe-r13on94 (this round's tree, 9.4)
+unix-040-fpe-r12 (9.4)            ->  unix-040-fpe-r13on94 (this round's tree, 9.4)
         .text   1,043,964 / 1,043,964   0 diffs over the ENTIRE section
         .data     119,416 /   119,416   3 diffs, all inside the build-id string
 ```

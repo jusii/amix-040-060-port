@@ -4,7 +4,7 @@
 # Inputs, by environment:
 #   PORT_GIT     a clone of this repository that has fff9660 and the patcher revisions below (default: this one)
 #   AMIX         an amix clone that has e45b061 (amix-dlm's history, kept by the move-in: the module core and kit)
-#                and fce38f4 (kernel/k30/tools and contracts: sddevsize and W-D7 injectors, emit-family-chains, k0-gates)
+#                and fce38f4 (kernel/k30/tools and contracts: sddevsize and support-probe injectors, emit-family-chains, k0-gates)
 #   PAULA        amix-paula with 62fdcab (the audio driver's three patchers)
 #   GCA          gcc-cross-amix's build/ (env.sh; toolchain/gcc-cross-amix.pin, gcc 2.7.2.3 8949028)
 #   AMIX_SYSTEM  amigaux/amix-system (kernels/2.1c/unix, the stock kernel the relinks check against)

@@ -3,7 +3,7 @@
 # W/amix-kerntools, W/amix-040-060-port, W/port, W/amix at b391504).  CONTROL (optional) is the frozen candidate-3
 # kernel emit and k0-gates compare against; without it emit runs --no-oracle alone and k0-gates reports the
 # control rows.  -61's M-REG1 measurement is left out (it reads, it does not shape the bytes).
-# Q4-3 proof after build-m.sh (the -61 recipe): sddevsize, the W-D7 probe, then steps 9-10 (relink-040-dlm.sh --fill:
+# The proof after build-m.sh (the -61 recipe): sddevsize, the support probe, then steps 9-10 (relink-040-dlm.sh --fill:
 # mkksym -f, mkident --fill/--check, mkabi.py --check against the rewritten
 # reference, ksymgate), emit c0-u6 twice, k0-gates (families-m.json), then on the emitted image: mkident --check,
 # the gate again, mkabi again, the sidecar (C2-3 v5 with abi=), M-REG1, nm.  Kerntools tools are only read.
@@ -16,7 +16,7 @@ cd $KT
 python3 tools/kernel-sddevsize-inject.py inject $K/unix-fpe -o $K/sd > $L/9-sddevsize.log 2>&1; tail -n 1 $L/9-sddevsize.log | cut -c1-90
 python3 tools/kernel-support-probe-inject.py inject $K/sd -o $K/w > $L/10-wd7.log 2>&1; tail -n 1 $L/10-wd7.log | cut -c1-90
 grep '^  .text  ' $L/10-wd7.log || true
-# steps 9-10 on the last form whose layout changes (W-D7 grows .text); emit only patches .data words
+# steps 9-10 on the last form whose layout changes (the support probe grows .text); emit only patches .data words
 (cd $T && DLM_REPO=$W/amix/kernel/dlm DLM_REV=b391504 sh relink-040-dlm.sh --fill $K/w) > $L/10f-fill.log 2>&1 \
 	|| { cat $L/10f-fill.log; exit 1; }
 grep 'ident=\|arena=\|ksym=\|abi=\|mkabi\|ksymgate:\|sizes filled' $L/10f-fill.log

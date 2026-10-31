@@ -40,7 +40,7 @@ dlm_static_root (core patch 0037) carries the same root list, written by relink-
 --root; the tool refuses a kernel where the two differ.
 
 Last, on any kernel, rth1=2 (C2-3 version 9) when the image's RTH1 half matches a motherboard
-controller's record by its motherboard id (amix-dlm C4-1 section 5.2): src/rth1.c from S5-46 on,
+controller's record by its motherboard id (amix-dlm C4-1 section 5.2): src/rth1.c from 2026-10-27 on,
 whose rth1_moboid is in the image's .text beside rth1_apply.  Absent: the old record forms only.
 
 -o OUT writes the sidecar there (default: KERNEL's directory/kabi when KERNEL is named unix, else

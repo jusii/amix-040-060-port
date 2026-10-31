@@ -8,7 +8,7 @@
   "paths": [
    "inputs/control/unix-060-fpe-r13-zz9000-c3-CARD1-ced0s1"
   ],
-  "why": "D-1 D4/D5: the rollback and diff reference; never rebuilt (KT-04). Paths are relative to the cut's run root (cut 68060-261030-51; optional there)."
+  "why": "The rollback and diff reference; never rebuilt. Paths are relative to the cut's run root (cut 68060-261030-51; optional there)."
  },
  "scan060": {
   "control_set_file": "contracts/scan060/candidate-3.txt",
@@ -17,7 +17,7 @@
   "normalisation": "candidate lines only; address column dropped; PC-relative targets '@(<hex> <SYM>)' reduced to '@(<SYM>)'; sorted. A newer scan060.py cannot move the gate: the set is pinned by this sha.",
   "why": "The 55 inherited candidates are stock movep/cas2/cmp2/64-bit-mul sites in stock and FPSP code that candidate-3 already carries to a real 060. They are not a driver-line finding. If one is ever shown to execute on silicon, that is a port-lane issue (Antti), not a gate change."
  },
- "note": "1.1 stage-2 k46 packages, interim pair (KD060-U's card-order points open): the r7 records + kinfo. Cut r7 (2026-10-21, owner decision 21:5x): the network fixes on the release media. Every shipped kernel carries DRIVER-LINE-10 (k0 gate tcp_hiwat required in every family); the 060 families carry z3660eth 9787f88. The published 1.0 stays r6e (kernel-families-r6e.json / -r6-2.json untouched). Chains work/k0-chains/r7/<family>.",
+ "note": "1.1 k46 packages, interim pair (KD060-U's card-order points open): the r7 records + kinfo. Cut r7 (2026-10-21): the network fixes on the release media. Every shipped kernel carries DRIVER-LINE-10 (k0 gate tcp_hiwat required in every family); the 060 families carry z3660eth 9787f88. The published 1.0 stays r6e (kernel-families-r6e.json / -r6-2.json untouched).",
  "families": {
   "KD060-Z": {
    "cputype": 60,
@@ -48,10 +48,10 @@
     "dlm-rev/obj/dlm_tail040.o"
    ],
    "scan060_vanished": {},
-   "note": "S4-22 (2026-10-26): the root-class kernel, no static z3660scsi (the Z3660 root comes from a module); S4-21 cut (2026-10-26): -61 recipe + relink-040-sd4card.sh after dd; dlm a15104e (core 0001-0032, kabi k46.1.1) with the halt hook, the sd seam, bdevsw[20] freed. The a4091/ide objects and the KD060-ZI IDE switch-table record serve the three-controller proof build only. S3-20, the k46 module kernel (2026-10-26): dd -> z3660 (Z3660_NET=off, e072408) -> f4arms --ufault --cache 60 -> f6 --kvd --swa -> rth1 DLM=1 -> kinfo DLM=1 -> dlm (amix-dlm db0abef) -> fpe (pgrsv, isp060, ttcompat, tcp hiwat), then sddevsize + W-D7. The S3-20 port tree = the -51 tree + the k46-module overlay. S5-15 re-cut (fresh tree): driver_objects pruned to what this chain links (no a4091/ide, the four-card sdcardbase040-sd4.o).",
+   "note": "2026-10-26: the root-class kernel, no static z3660scsi (the Z3660 root comes from a module); the cut of 2026-10-26: -61 recipe + relink-040-sd4card.sh after dd; dlm a15104e (core 0001-0032, kabi k46.1.1) with the halt hook, the sd seam, bdevsw[20] freed. The a4091/ide objects and the KD060-ZI IDE switch-table record serve the three-controller proof build only. The k46 module kernel (2026-10-26): dd -> z3660 (Z3660_NET=off, e072408) -> f4arms --ufault --cache 60 -> f6 --kvd --swa -> rth1 DLM=1 -> kinfo DLM=1 -> dlm (amix-dlm db0abef) -> fpe (pgrsv, isp060, ttcompat, tcp hiwat), then sddevsize + the support probe. That port tree = the -51 tree + the k46-module overlay. Re-cut (fresh tree): driver_objects pruned to what this chain links (no a4091/ide, the four-card sdcardbase040-sd4.o).",
    "spl": {
     "cflags_env": "gcc-cross-amix/build/env.sh",
-    "why": "T-9: under -traditional sys/types.h erases volatile and gcc drops the spl()/splx() asms. G1 = the macro dump must not define volatile empty; G2 = every spl-calling function writes %sr. Paths are relative to --objects-dir (the port build dir); includes are the relink scripts' own.",
+    "why": "Under -traditional sys/types.h erases volatile and gcc drops the spl()/splx() asms. G1 = the macro dump must not define volatile empty; G2 = every spl-calling function writes %sr. Paths are relative to --objects-dir (the port build dir); includes are the relink scripts' own.",
     "units": {
      "pgrsv.o": {
       "source": "../src/pgrsv.c",
@@ -159,13 +159,13 @@
     "rev": "c25d93d"
    },
    "kinfo": "C2-1 v2 with the module list (DLM=1), kabi k46.1.0, cdevsw[53]; port k46-module",
-   "dlm": "S3-20: amix-dlm db0abef core spliced by relink-040-dlm.sh (port k46-module); z3660eth, zz9000, monsw out (majors 49/51/52 empty)",
+   "dlm": "amix-dlm db0abef core spliced by relink-040-dlm.sh (port k46-module); z3660eth, zz9000, monsw out (majors 49/51/52 empty)",
    "scan060_tables": {
     "sha256": "f6827c8d47c65b5cf9ad5f8b82e5dcc9175069f25d0cd2ea92ae442ee5830dad",
     "objects": [
      "ide_040.o"
     ],
-    "why": "KT-31: amix-040-060-port tools/scan060-tables.py (6e8f973) -- a scan060 MOVEP candidate inside a gcc switch dispatch table (movew %pc@(T,%dN:l:2),%d0 / jmp %pc@(T,%d0:w), bound from the moveq before it) is a misdecoded 16-bit offset, not an instruction. KD060-ZI's one: ide_040.o idequeue's 54-entry table, the entry at +0x1616 decodes as `movepw %d0,%a2@(1152)` (.text+0xfd656 in the chain). Reader sha pinned: a newer reader cannot move the gate; anything else new stays a failure."
+    "why": "amix-040-060-port tools/scan060-tables.py (6e8f973) -- a scan060 MOVEP candidate inside a gcc switch dispatch table (movew %pc@(T,%dN:l:2),%d0 / jmp %pc@(T,%d0:w), bound from the moveq before it) is a misdecoded 16-bit offset, not an instruction. KD060-ZI's one: ide_040.o idequeue's 54-entry table, the entry at +0x1616 decodes as `movepw %d0,%a2@(1152)` (.text+0xfd656 in the chain). Reader sha pinned: a newer reader cannot move the gate; anything else new stays a failure."
    }
   }
  },
@@ -234,6 +234,6 @@
    "bench cards": "1:/hdf/rollback-9994961A.bin beside rollback-C96EAD03.bin"
   },
   "deploy": "at the release acceptance only, deploy-kvm --expect-crc 66660DDB",
-  "boot_bin": "open: the Z3660 station decides whether BOOT.BIN follows Z3660.bin (1.0: both C96EAD03)"
+  "boot_bin": "open: whether BOOT.BIN follows Z3660.bin (1.0: both C96EAD03)"
  }
 }

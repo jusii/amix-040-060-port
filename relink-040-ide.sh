@@ -1,10 +1,10 @@
 #!/bin/sh
 # relink-040-ide.sh -- link the A4000 Gayle IDE driver (amix-gayle-ide, ide.c) into a kernel of
-# this line and register it with sd (2026-10-02, P-15 P2).
+# this line and register it with sd (2026-10-02).
 #
 # What goes in:
 #   ide_040.o          ide.c, compiled here from a pinned revision of the amix-gayle-ide repository
-#                      with the T-9 kernel flags for -m68040, -DIDE_NBPP=4096 (Model-B pages) and
+#                      with the volatile-safe kernel flags for -m68040, -DIDE_NBPP=4096 (Model-B pages) and
 #                      -DIDE_CACHE=1 (the driver's own 040/060 data-cache line pushes around PIO
 #                      and its check that the task file is reached cache-inhibited; kmem knob
 #                      ide_cache).  The driver repository owns all of that; this pass compiles it.
@@ -15,12 +15,12 @@
 #                      idepresent() and every other id through autocon.  The glue's header has the
 #                      order rule: by default IDE ranks after every board the base registers
 #                      ("Z3660 stays card 0, IDE next"); IDE_ORDER=address ranks it by its real
-#                      base instead (card 0).  The owner's decision on the rule is pending.
+#                      base instead (card 0).  Which rule becomes the default is open.
 # and three edits after the link (src/ide_sd_rows.py patch): the `lea <table>,%a3` relocation at
 # .text+0xd74c, init()'s loop bound at .text+0xd79f, and init()'s `jsr autocon` at .text+0xd78e.
 #
 # Interrupts: none.  On this line int2_tbl is a fixed table (src/patch_a3091_intr.py), ide.c
-# looks for itself there, does not find itself and runs polled -- the owner's Q5 answer.
+# looks for itself there, does not find itself and runs polled.
 #
 # A post-pass, after any pass that replaces sd's table by name (relink-040-z3660.sh needs the
 # stock `scsicard`), before relink-040-fpe.sh (always the last link).  The a4091 pass and this one
@@ -90,7 +90,7 @@ rm -rf "$SRCDIR"; mkdir -p "$SRCDIR"
 # (cpushl/cinvl around PIO, the DTTn cache-inhibit check, ide_cache knob), polled-only on this line,
 # spin budgets x4 with the ide_spins_hw high-water, and the MB banner without a >>11.  ide.c includes
 # nothing from its own repository; rico.h and sd.h come from the sysroot's amiga/alien.
-# Moved 2026-10-02 to 70e768e (reviewed, gayle-ide tag e2c7122): ATAPI CD-ROM via PACKET
+# Moved 2026-10-02 to 70e768e (gayle-ide e2c7122): ATAPI CD-ROM via PACKET
 # passthrough, slave mode 2.  Moved again the same day to 32c0420: polled ATAPI ends a command
 # only in the status phase.
 IDE_REV="${IDE_REV-32c0420}"
@@ -126,7 +126,7 @@ M=$(m68k-linux-gnu-readelf -SW "$OBJ" | awk '{gsub(/[][]/,"")} $2 ~ /^\.rodata/ 
 echo "[*] page geometry: the compiled bytes"
 run_step indent sh "$HERE/src/check_page_geometry.sh" "$OBJ"
 
-echo "[*] T-9 gates G1/G2"
+echo "[*] spl gates G1/G2"
 run_step all python3 "$HERE/tools/spl-gate.py" --object "$OBJ" --source "$SRCDIR/ide.c" \
 	--cflags "$CF" -- $DEFS -I"$ALIEN"
 

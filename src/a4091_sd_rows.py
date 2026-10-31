@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # a4091_sd_rows.py -- the sd.c side of the A4091/A4092 registration on the driver line
-# (PO-04, 2026-09-28).  Two modes, run by relink-040-a4091.sh on either side of its link.
+# (2026-09-28).  Two modes, run by relink-040-a4091.sh on either side of its link.
 #
 #   gen BASE OUT.s OUT.syms   read BASE's controller table as sd's init() will walk it -- the
 #                             symbol the `lea <table>,%a3` relocation at .text+0xd74c names,

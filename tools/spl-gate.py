@@ -155,7 +155,7 @@ def main():
     vol = [ln for ln in r.stdout.splitlines() if ln.startswith("#define volatile")]
     if g1_erases_volatile(r.stdout):
         fail("G1 -traditional erases volatile (`#define volatile` is EMPTY): the spl()/splx() "
-             "asms lose volatile and gcc drops them (T-9)")
+             "asms lose volatile and gcc drops them")
     else:
         ok("G1 volatile kept (%s)" % ("; ".join(vol) or "no #define volatile"))
 
@@ -192,7 +192,7 @@ def main():
             note("G2 ALLOWLISTED -- %d function(s) call spl with no %%sr write (%s); "
                  "allowance: %s" % (len(bad), ", ".join(bad), a.allow))
         else:
-            fail("G2 %d function(s) call spl but write %%sr never: %s (T-9: the masks were "
+            fail("G2 %d function(s) call spl but write %%sr never: %s (the masks were "
                  "dropped)" % (len(bad), ", ".join(bad)))
     elif not missing:
         ok("G2 every spl-calling function writes %%sr (%d function(s))" % len(sites))

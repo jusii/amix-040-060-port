@@ -27,7 +27,7 @@ Inputs (`cut.sh` names each by an environment variable):
 - gcc-cross-amix at the commit amix's `toolchain/gcc-cross-amix.pin` names (gcc 2.7.2.3, `8949028`);
 - amigaux/amix-system: `kernels/2.1c/unix`, the stock kernel the relinks check against;
 - NetBSD 10.1's `syssrc.tgz` (the FPSP; `tools/netbsd-pin.sh` checks it);
-- amix-kerntools at `bd091b4`: its `tools/` and `contracts/` (the sddevsize and W-D7 injectors,
+- amix-kerntools at `bd091b4`: its `tools/` and `contracts/` (the sddevsize and support-probe injectors,
   `emit-family-chains.py`, `k0-gates.py`). **Not public yet**: these move to amix `kernel/k30/tools`, and
   `cut.sh` then takes them from there;
 - optional: the frozen candidate-3 kernel (`5aa7d732`) that emit and k0-gates compare against. It is

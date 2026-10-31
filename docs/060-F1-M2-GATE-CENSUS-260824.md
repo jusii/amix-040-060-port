@@ -44,7 +44,7 @@ the **body**, and by construction the sendsig path can never produce the second.
 `fpi_ss_skip_n` beside a zero `fpc_setup_nofpu_n` is the wrapper working exactly as written.
 
 The numbers close, on both arms of the same ladder
-(`Amix/tmp/2026-08-24-blizzard-f2m0/lc/counters-final.txt` and `fpu/counters-after-ladder.txt`):
+(the LC rig's final counters and the FPU rig's counters after the ladder):
 
 ```text
 LC rig    fpi_ss_skip_n  898     fpi_ss_pass_n    0     fpc_setup_n     0
@@ -65,7 +65,7 @@ and `setregs` tests `fpu_present` directly. A1 therefore narrows to `fpu_save` a
 ## 3. The gate at every one of the eleven sites
 
 Disassembled out of the image that was actually booted
-(`Amix/tmp/2026-08-24-blizzard-f1m3/kernels/unix-060`, sha256
+(`unix-060`, sha256
 `82470ea2943ff420e5315d4aed46b270830cb07eb2f7f1c099fe43c4807c7ef7`) and cross-checked against
 `build/REF-unix-040-f1-baseline`, which carries the same stock bodies at the same addresses.
 Both are relocatable images, so each gate is named by its relocation rather than inferred.
@@ -220,12 +220,6 @@ docs/060-F1-FPUINIT-PREREG-260824.md   §7 carries the dated correction
 build/REF-unix-040-f1-baseline         the pre-F1 image the stock gates were read out of
 ```
 
-Bench evidence, outside the repository:
-
-```text
-Amix/tmp/2026-08-24-blizzard-f2m0/CENSUS.txt              anomaly A1 as raised
-Amix/tmp/2026-08-24-blizzard-f2m0/lc/counters-final.txt   the LC zeros + fpi_ss_skip_n 898
-Amix/tmp/2026-08-24-blizzard-f2m0/fpu/counters-after-ladder.txt   the FPU-rig mirror
-Amix/tmp/2026-08-24-blizzard-f1m3/kernels/unix-060        the image disassembled here
-Amix/tmp/2026-08-24-blizzard-f1m3/SCORESHEET.txt          rigA3/rigA4, the same zeros
-```
+Bench evidence, kept outside the repository: the census that raised anomaly A1, the LC rig's final
+counters (the zeros and `fpi_ss_skip_n` 898), the FPU rig's mirror of them, the image disassembled
+here, and the scoresheet of rigA3/rigA4 with the same zeros.

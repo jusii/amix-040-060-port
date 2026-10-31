@@ -41,7 +41,7 @@ that the field's **file offset moves with `.data`**: it was `0x114c04` in rounds
 in round 5, because round 4's new counters grew the section ahead of it, and the next counter will
 move it again. So any gate of the "expect sha X" kind must **derive the field's offset from the
 symbol table, or compare modulo the field — never pin the offset numerically.**
-(`Amix/tmp/2026-08-27-fpe-r5/RESULTS.md`, artifact gate; the build-side change belongs to the
+(round 5's results, artifact gate; the build-side change belongs to the
 shared build tooling, not to this lane.)
 
 ---
@@ -527,7 +527,7 @@ names — and is corroborated by `src/fpsp060_glue.s:417`/`:422` reading `%sp@(0
 longword — which only exists in a 16-byte frame.
 
 **Round 5 measured the format-2 row instead of citing it, and corrected half of it**
-(`Amix/tmp/2026-08-27-fpe-r5/RESULTS.md` item 6). The pairing holds: `fpe_v11_fmt2_word` latched
+(round 5's results, item 6). The pairing holds: `fpe_v11_fmt2_word` latched
 `0x202c` off **2,057 genuine 68040 vector-11 frames** on an FPU-present 040 rig, every event on
 that rig was format 2, and no other shape appeared — with `fpe_entry_n` still 0 and the FPSP's own
 transcendental answers still exact to 15 digits, so the census perturbs nothing. See §8 item 2,
@@ -745,7 +745,7 @@ Two build facts follow, both already law in this tree:
    unreachable: every 040 available has an FPU, so the lane never armed on one), and round 5
    latched **`fpe_v11_fmt2_word = 0x202c` off 2,057 genuine 68040 frames** with `fpe_entry_n`
    still 0 and the FPSP's results still correct to 15 digits
-   (`Amix/tmp/2026-08-27-fpe-r5/RESULTS.md` item 6). The same measurement corrected the row's
+   (round 5's results, item 6). The same measurement corrected the row's
    `+8` field to the **operand effective address** — §6.2.
 3. **`ufetch_short`'s failure semantics on a sleeping fault** are inherited from the `copyin`
    shape (§3.5) and share the ownership hazard of §7.3.

@@ -24,7 +24,7 @@ Inputs (`cut.sh` names each by an environment variable; all of them public):
 - this repository at `2e7f715` (`git archive`, the build tree; and a clone, which the kit and the gates read);
   from its history, the five patchers `families-c.json` pins, as -52;
 - amix at `b391504`, cloned: `kernel/dlm` (the module core, `make kit`), `kernel/k30/tools` and `contracts`
-  (the sddevsize and W-D7 injectors, `emit-family-chains.py`, `k0-gates.py`), `toolchain/m68k-gnu-bin`;
+  (the sddevsize and support-probe injectors, `emit-family-chains.py`, `k0-gates.py`), `toolchain/m68k-gnu-bin`;
 - amix-paula at `62fdcab`; gcc-cross-amix at amix's `toolchain/gcc-cross-amix.pin` (gcc 2.7.2.3, `8949028`), its
   `build/` inside a git checkout holding that commit; gcc14-cross-amix's `build/` (`G14`), or its `m68k-elf-*`
   already first on PATH as `m68k-linux-gnu-*` (`cut.sh` refuses any assembler or linker but 2.43.1);
@@ -53,7 +53,7 @@ finds gcc-cross-amix's checkout through a linked `build/`), `2e7f715` (no gawk `
 `cut.sh` at `2e7f715` reproduces all seven sums on the host with the control (k0-gates ALL GREEN, `ksymgate`
 12 of 12 on the shipped form, `mkabi --check` no moved line) and in `amix-toolchain:dist` without it (k0-gates'
 one refusal is the missing control); at `9c36454`, before the three fixes, two host runs gave the same sums.
-Booted in emulation (row N219m, an A4000 with a 68060): kbootset check, build and commit, then the kernel up as
+Booted in emulation (an A4000 with a 68060): kbootset check, build and commit, then the kernel up as
 `68060-261031-53` (uname), mark-good, the rig's 35 checks PASS; ufs, z3660scsi and z3660eth load, a cp/cmp of the
 kernel is clean, and the freeq guard is live (`fqg_magic` 46514721, 363 calls, `fqg_run` 0).
 Hardware acceptance on the A4000T follows.

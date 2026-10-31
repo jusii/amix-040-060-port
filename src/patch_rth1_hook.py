@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # patch_rth1_hook.py -- route main's one call to vfs_mountroot through rth1_mountroot, the kernel
-# half of the RTH1 root hint (docs/contracts/RTH1-ROOT-HINT.md, src/rth1.c; 2026-10-05, D-2).
+# half of the RTH1 root hint (docs/contracts/RTH1-ROOT-HINT.md, src/rth1.c; 2026-10-05).
 #
 #   patch_rth1_hook.py KERNEL             retarget; idempotent ([skip] when already done)
 #   patch_rth1_hook.py --check KERNEL     verify a finished kernel carries the hook; writes nothing

@@ -3,7 +3,7 @@
 Round 3 booted the soft-FPU lane for the first time and the lane works: on the FPU-less 68LC060
 every rung of the acceptance ladder produces correct, value-checked output across 29.5 million
 emulated instructions, with zero panics, zero format surprises and zero supervisor entries
-(`Amix/tmp/2026-08-26-fpe-r3/RESULTS.md`). It also produced **three defects and two broken
+(round 3's results). It also produced **three defects and two broken
 instruments**, one of the defects severe enough that three processes had to be power-cut.
 
 This document is committed **before** any round-4 code. Each fix states its mechanism, the
@@ -357,7 +357,7 @@ smaller residue.
 ## 5. FIX 5 — `fpe_fmt2_n` is structurally unreachable
 
 **The defect.** `src/fpe040.s:81-85` declines on `fpu_present` **before** the format census, so on
-every FPU-present 040 in this workspace's fleet the lane never arms and `fpe_fmt2_n` can never
+every FPU-present 040 in the project's fleet the lane never arms and `fpe_fmt2_n` can never
 move. §9 item 10's stated intent — *"the counter that will latch it the first time an 040 rig runs
 this kernel"* — cannot be discharged on an FPU-present 040 at all, which is the only kind of 040
 available. Contract §8 item 2's standing gap (the format-2/`0x202c` pairing rests on Motorola's
@@ -409,7 +409,7 @@ purpose. Any future reading of the bar must exclude them by name.
 
 ## 6. FIX 6 — the si_code A/B: what agreed, what did not, and what the divergence actually is
 
-The dispatch asked for the si_code derivation to be fixed so the emulated code matches the
+The round's task was to fix the si_code derivation so the emulated code matches the
 real-FPU rig, on the reading that "FLTDIV agreed, FLTOVF did not". **Round 3's own table says the
 codes agreed on both rows.** `RESULTS.md` item 4:
 
@@ -476,7 +476,7 @@ address and `fpe_last_si_addr` the one actually delivered, so the next A/B can s
 a disassembler in the loop — and the difference between them is, by §6.1's rule, exactly the
 distance to the next FP instruction.
 
-> **REFUTED BY MEASUREMENT — round 5** (`Amix/tmp/2026-08-27-fpe-r5/RESULTS.md` item 7). The rule
+> **REFUTED BY MEASUREMENT — round 5** (round 5's results, item 7). The rule
 > above does not reproduce. Applied to round 5's `ovf` probe it predicts `0x800006bc` — the loop's
 > next *FP* instruction. **The real-FPU reference reported `0x800006ce`**, the next instruction,
 > which is an `addql` and not an FP one. Nor does round 3's own row survive as stated: there the
@@ -491,7 +491,7 @@ distance to the next FP instruction.
 > `si_code 4` / `si_addr 0x800006ce` for overflow, same binaries on both beds. The gap this
 > section predicted, and that FIX 6 exists to measure, did not appear at all.
 >
-> **STANDING RULING (orchestrator, round 5): deferred si_addr reporting is NOT implemented, and
+> **DECISION (round 5): deferred si_addr reporting is NOT implemented, and
 > immediate reporting is the accepted, documented behaviour of this lane.** Nothing in the emulated
 > path needs changing on this evidence. The `fpe_last_fault_pc` / `fpe_last_si_addr` pair stays in
 > as the instrument that brackets any future divergence, so the decision can be revisited on a
@@ -500,7 +500,7 @@ distance to the next FP instruction.
 > silicon (the definitive A/B still wants a Mercury or an A3640), and 2 of the 6 enabled-exception
 > classes have been compared.
 
-### 6.2 The derivation order, audited as asked
+### 6.2 The derivation order, audited
 
 Order in `fpe_fltcode`: `(BSUN|SNAN|OPERR)` → `OVFL` → `UNFL` → `DZ` → `(INEX1|INEX2)`. That is
 Motorola's exception priority, highest first, with members grouped only where SVR4 gives them the
@@ -546,7 +546,7 @@ document, which stays the round-2 record.
 | `FPE-GLUE-DESIGN.md:488-492` (§5.2) | `si_addr` — "the two agree without being made to" | A coincidence, not a property: they agree iff the instruction after the faulting one is itself an FP instruction. §6.1. |
 | `FPE-GLUE-DESIGN.md:790-791` (§9 item 10) | `fpe_fmt2_n` latches the format-2 frame on an 040 rig | Structurally unreachable as designed — the decline runs first. §5. |
 | `FPE-GLUE-DESIGN.md:276-283` (§4.3) | AMIX's `cputype` is a `short`, per `sys/systm.h:18` | The declaration says `short`; **this port's own definition is `.long`** (`src/cputype060.s:21`) and every other reader in the port treats it as one. §3. |
-| dispatch (round 4, FIX 6) | "FLTDIV agreed, FLTOVF did not" | Both `si_code`s agreed. The FLTOVF row's divergence is `si_addr`. §6. |
+| round 4's task (FIX 6) | "FLTDIV agreed, FLTOVF did not" | Both `si_code`s agreed. The FLTOVF row's divergence is `si_addr`. §6. |
 
 ---
 
@@ -558,7 +558,7 @@ document, which stays the round-2 record.
   fractional part prints and the format is right — so the failure is in the input: `uptime` reads
   `avenrun[]` out of kernel memory and the value it reads is wrong. A pre-existing AMIX defect the
   FPE lane un-masked, because on a stock LC kernel `uptime` cannot run at all. **Not an FP defect
-  and not fixed here.** Needs an owner; the cross-check on an FPU rig is a one-liner and was not
+  and not fixed here.** Open; the cross-check on an FPU rig is a one-liner and was not
   run (`/usr/bin/uptime` is absent there).
 * **The FPE kernel is not sha-reproducible by construction.** `src/stamp_buildid.py` writes a
   per-day, per-machine incrementing sequence into a 16-byte `buildid` field at file offset

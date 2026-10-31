@@ -1,6 +1,6 @@
 # The root hint: the `RTH1` record the boot loader leaves for the kernel
 
-**Status:** specification, record version 1. Driver line, 2026-10-05 (workspace decision D-2). Proposed
+**Status:** specification, record version 1. Driver line, 2026-10-05. Proposed
 to the upstream line by letter; until that answer is in, this is the driver line's own interface and is
 not listed in `CONTRACTS.md`. The loader half is built by the kerntools line (identities `good_rth` for
 the 68030 loader and `good_040_rth` for the 68040/68060 one). The kernel half is `src/rth1.c`, and the
@@ -26,7 +26,7 @@ the structure, on both sides:
   `bootinfo+0x66c..0x677` therefore holds the loader's last three `BootData` longs (`bd_dvaddr`,
   `bd_doffset`, `bd_dsize`), and the loader's `reserved[0..243]` lands at kernel `bootinfo+0x678..0x76b`.
   The loader's last 12 bytes never arrive.
-- Measured on the emulator, 2026-10-05: workspace `tmp/2026-10-05-rootdev-hint/UNKNOWN-boot2.md` §8,
+- Measured on the emulator, 2026-10-05 (boot2's own read of the record),
   with a 68030 kernel at 0x040effbd and a 68060 kernel at 0x07107ca8.
 
 **Mixed old and new boot as before:**

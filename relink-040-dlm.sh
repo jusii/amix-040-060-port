@@ -26,8 +26,8 @@
 # kinfo's DLM=1 output: its two open imports, dlm_kinfo_list and dlm_marc_post, are the core's.
 # fpe stays the last link.  `relink-040-dlm.sh --fill <kernel>` then fills the block's sizes and
 # AXK1's offsets in place, takes the fingerprint (tools/mkabi.py against abi/k46/abi-<kabi>.txt,
-# C3-3 section 4) and runs the gate (the brief's steps 9 and 10), on the last form whose layout
-# changes: after amix-kerntools' W-D7 probe inject, which grows .text (124 bytes on KD060-Z) and so
+# C3-3 section 4) and runs the gate (the stage-3 plan's steps 9 and 10), on the last form whose layout
+# changes: after the support-probe inject, which grows .text (124 bytes on KD060-Z) and so
 # moves every .data image offset; before emit-family-chains, which patches .data words only.
 #
 # usage: sh relink-040-dlm.sh [base-kernel] [output]
@@ -106,7 +106,7 @@ stage() {
 	echo "$REV" > "$S/.rev"
 }
 
-# the probe's offset table (the brief's step 2), for the core and for the fingerprint
+# the probe's offset table (the stage-3 plan's step 2), for the core and for the fingerprint
 offs() {
 	sh "$S/core/tools/mkoffs" m68k-cbm-sysv4-gcc $AMIX_KERNEL_CFLAGS -I"$S/core/include" > "$S/core/dlm_offs.h" \
 		|| { echo "[FAIL] mkoffs"; exit 1; }
@@ -175,7 +175,7 @@ U=$(echo "$NM_IN" | awk '$1=="U" && $2!="edata" && $2!="end" && $2!="etext" {pri
 run_step indent python3 "$HERE/src/check_dlm_splice.py" --free-rows 49,51,52 "$IN"
 echo "      cdevsw[49], [51], [52] free; z3660eth, zz9000, monsw absent; open: $U"
 
-# ---------------------------------------------------------------- 1. the core (brief steps 1-6)
+# ---------------------------------------------------------------- 1. the core (stage-3 plan steps 1-6)
 stage
 PIN=gcc-$(awk '$1=="gcc"{print $2}' "$S/kit/toolchain.pin")-$(awk '$1=="commit"{print $2}' "$S/kit/toolchain.pin")
 # the checkout build/ is in, taken logically: build/ may be a link into an installed toolchain
@@ -383,4 +383,4 @@ run_step 1 python3 "$HERE/src/check_relink_relocs.py" "$OUT"
 python3 "$HERE/src/stamp_buildid.py" "$OUT"
 
 echo "[OK] built $OUT"
-echo "     next:  relink-040-fpe.sh (always the last link); relink-040-dlm.sh --fill after the W-D7 inject"
+echo "     next:  relink-040-fpe.sh (always the last link); relink-040-dlm.sh --fill after the support-probe inject"

@@ -1,6 +1,6 @@
 #!/bin/sh
 # relink-040-sd4card.sh -- four disk controllers in the stock sd, dd and ct, in the rank order of
-# amix-dlm C4-1 (2026-10-26, Q4-3).
+# amix-dlm C4-1 (2026-10-26).
 #
 # The stock sd layer keeps two controllers (SDCARDS 2) sorted by base address and drops a third;
 # dd and ct keep two-row tables and take the card from minor bit 3 alone.  C4-1 gives four cards:

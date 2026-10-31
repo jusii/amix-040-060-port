@@ -21,7 +21,7 @@ Inputs (`cut.sh` names each by an environment variable; all of them public):
   module-kernel chain, and for the ufs module `tools/fsobj-patch.py` and `tools/ufs-tailzero.sh`; from its
   history, the five patchers `families-c.json` pins, as -51;
 - amix at `e45b061` (amix-dlm's history: the module core and `make kit`, as -51) and at `fce38f4`
-  (`kernel/k30/tools` and `kernel/k30/contracts`: the sddevsize and W-D7 injectors, `emit-family-chains.py`,
+  (`kernel/k30/tools` and `kernel/k30/contracts`: the sddevsize and support-probe injectors, `emit-family-chains.py`,
   `k0-gates.py`; until -51 these came from amix-kerntools `bd091b4`);
 - amix-paula at `62fdcab`; gcc-cross-amix at amix's `toolchain/gcc-cross-amix.pin` (gcc 2.7.2.3, `8949028`);
   amigaux/amix-system's `kernels/2.1c/unix`; NetBSD 10.1's `syssrc.tgz`;

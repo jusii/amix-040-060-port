@@ -6,7 +6,7 @@
 # Inputs, by environment:
 #   PORT_GIT     a clone of this repository that has 2e7f715 and the patcher revisions below (default: this one)
 #   AMIX         an amix clone that has b391504 (kernel/dlm: the module core and `make kit`; kernel/k30/tools and
-#                contracts: sddevsize and W-D7 injectors, emit-family-chains, k0-gates; toolchain/m68k-gnu-bin)
+#                contracts: sddevsize and support-probe injectors, emit-family-chains, k0-gates; toolchain/m68k-gnu-bin)
 #   PAULA        amix-paula with 62fdcab (the audio driver's three patchers)
 #   GCA          gcc-cross-amix's build/ (env.sh; toolchain/gcc-cross-amix.pin, gcc 2.7.2.3 8949028), inside
 #                a git checkout that has 8949028 (relink-040-dlm.sh checks the installed wrapper against it)

@@ -1,6 +1,6 @@
 #!/bin/sh
 # relink-040-pgrsv.sh -- a free-page reserve in front of page_get (DRIVER-LINE-8; 2026-10-06).
-# DEFAULT since r6 (owner, Q-6.1): relink-040-fpe.sh runs this pass in its step 0.6 (PGRSV=0 opts out);
+# DEFAULT since r6: relink-040-fpe.sh runs this pass in its step 0.6 (PGRSV=0 opts out);
 # this script stays for applying it explicitly, and fpe then reports [skip].  Closes the low-memory
 # deadlock where pageout sleeps on freemem waiting for the buffer its own page push needs (the I3
 # install hang, 32 MB rig).
@@ -65,7 +65,7 @@ SCANLINES=$(echo "$SCAN" | sed -n 's/.*(\([0-9][0-9]*\) decoded lines).*/\1/p')
 echo "$SCAN" | grep -q 'CLEAN -- no candidate found' \
 	|| { echo "[FAIL] scan060: pgrsv.o is not CLEAN"; echo "$SCAN"; exit 1; }
 echo "      [OK]   scan060 CLEAN ($SCANLINES decoded lines)"
-# -traditional can drop an asm it thinks dead (T-9): both SR writes must be in the object.
+# -traditional can drop an asm it thinks dead: both SR writes must be in the object.
 NSR=$(grep -c 'movew %d[0-7],%sr\|movew #9216,%sr' "$HERE/build/pgrsv.lst" || true)
 [ "$NSR" -ge 2 ] || { echo "[FAIL] pgrsv.o carries $NSR SR writes, want the splimp and the splx"; exit 1; }
 

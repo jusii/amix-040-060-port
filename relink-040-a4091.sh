@@ -1,11 +1,11 @@
 #!/bin/sh
 # relink-040-a4091.sh -- link the A4091/A4092 53C710 driver into a kernel of this line
-# (PO-04, 2026-09-28).
+# (2026-09-28).
 #
 #   the amix-a4091 repository   src/a4091-wr.c, built with -DA4091_KVA: its 040/060 arm, which
 #                               finds the board only through sd's autocon() lookup, maps both
 #                               register pages NCS with dev_kvmap(), and never takes a fixed
-#                               address (A4-11)
+#                               address
 #
 # What this pass adds, and why nothing else:
 #
@@ -96,15 +96,15 @@ ALIEN="$AMIX_SYSROOT/usr/sys/amiga/alien"
 SRCDIR="$HERE/build/a4091-src"
 rm -rf "$SRCDIR"; mkdir -p "$SRCDIR"
 FILES="src/a4091-wr.c src/a4091_dmarec.h tools/a4091-widths.py"
-# Pinned (PO-17, 2026-09-29): amix-a4091 6cebff2 (A4-19) -- the D42 contract's names, the bounce
-# (A4-18: a misaligned FROM_DEVICE transfer of <= 1 KB goes through a static 16-aligned buffer, > 1 KB
+# Pinned (2026-09-29): amix-a4091 6cebff2 -- the D42 contract's names, the bounce
+# (a misaligned FROM_DEVICE transfer of <= 1 KB goes through a static 16-aligned buffer, > 1 KB
 # is refused with status 0xff, so edge_shared stays 0), and now the bounce's service length rounded
 # up to 16 bytes (the SCSI length stays nbyte) with the buffer cleared before prepare, so a short read
 # copies out zeros.  a4091_kstat's magic is "A4K2".  a4091_040.o 4641f912 (stub arm), e07c7619 (D42).
-# Moved 2026-10-02 to d2f0f07 (A4-21): the "A4091 slow" print is gated on a patchable poll threshold
+# Moved 2026-10-02 to d2f0f07: the "A4091 slow" print is gated on a patchable poll threshold
 # (a4091_slow_poll, default 1,000,000) and a4091_maxpoll records the worst poll.
 # a4091_040.o 9732e320 (stub arm), 726dfbec (D42).
-# Moved again 2026-10-02 to ff7ee6a (A4-22): one SCSI bus reset per card before its first command,
+# Moved again 2026-10-02 to ff7ee6a: one SCSI bus reset per card before its first command,
 # gated by a patchable a4091_busreset, counted in a4091_busreset_n / _to.
 # a4091_040.o 55dde040 (stub arm), 3e239160 (D42).
 A4091_REV="${A4091_REV-ff7ee6a}"
@@ -157,7 +157,7 @@ else
 	echo "      differential: $NDIFF disassembly lines differ from the stock-header compile -- read them"
 fi
 
-echo "[*] T-9 gates G1/G2"
+echo "[*] spl gates G1/G2"
 run_step all python3 "$HERE/tools/spl-gate.py" --object "$OBJ" --source "$SRCDIR/a4091-wr.c" \
 	--cflags "$CF" -- $DEFS -I"$ALIEN" -I"$SRCDIR"
 echo "[*] 53C710 register access widths (the a4091 lane's gate, from the same revision)"

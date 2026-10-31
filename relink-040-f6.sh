@@ -26,7 +26,7 @@
 # no ufault census, and -- worse -- no cache arm, which is the difference between reaching
 # userland and stopping at swapconf's lookup.  That last part is true on a Z3660 only: a base
 # without z3660queue has no piscsi driver and so no cache knob, and needs only `--ufault`
-# (2026-10-02, P-15 K2, docs/K2-ARMS-WITHOUT-Z3660.md).
+# (2026-10-02, docs/K2-ARMS-WITHOUT-Z3660.md).
 #
 # usage: sh relink-040-f6.sh [--kvd] [--mcs] [--swa] <in-kernel> <out-kernel>
 set -e
@@ -60,7 +60,7 @@ NM=m68k-linux-gnu-nm
 $NM "$IN" | grep -qE " [Tt] uft_latch\$" \
 	|| { echo "[FAIL] $IN has no uft_latch -- run relink-040-f4arms.sh --ufault first"; exit 1; }
 # The cache arm is the Z3660 piscsi driver's own coherence knob, so it is required exactly when
-# that driver is in the base (2026-10-02, P-15 K2, docs/K2-ARMS-WITHOUT-Z3660.md).  A base with
+# that driver is in the base (2026-10-02, docs/K2-ARMS-WITHOUT-Z3660.md).  A base with
 # no z3660queue has no knob to require; its host adapter brings its own coherence (D42, B2).
 if $NM "$IN" | grep -qE " [TtDdBb] z3660queue\$"; then
 	$NM "$IN" | grep -qE " [Dd] zc_magic\$" \

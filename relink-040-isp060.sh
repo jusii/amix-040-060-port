@@ -1,6 +1,6 @@
 #!/bin/sh
 # relink-040-isp060.sh -- Motorola's M68060 Integer Support Package behind isp61
-# (DRIVER-LINE-9; 2026-10-06).  DEFAULT since r6 (owner, Q-6.1): relink-040-fpe.sh runs this pass in
+# (DRIVER-LINE-9; 2026-10-06).  DEFAULT since r6: relink-040-fpe.sh runs this pass in
 # its step 0.6 (ISP060=0 opts out); this script stays for applying it explicitly, and fpe then [skip]s.
 #
 #   build-isp060.sh            build/isp060_pkg.o = src/isp060_head.s + 060sp/isp.S + src/isp060_glue.s

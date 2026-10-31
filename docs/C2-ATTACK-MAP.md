@@ -21,7 +21,7 @@
   the machine entirely, and the last well-conditioned row left on the ladder is priced in full and
   found to sit inside the rig's own noise floor (§45). Every ranked number in Part I is measured on
   the 2026-08-22/23 metal sessions.
-* **Part II — v2 (§§6–12)** is the map the campaign was dispatched from. It is
+* **Part II — v2 (§§6–12)** is the map the campaign was run from. It is
   **superseded in part**: its ordering held, its rung 1 estimate was vindicated, and one of
   its conclusions — "`LOOP` is empty" — is **refuted by measurement** (§15). Kept whole.
 * **Part III — v1 (§§0–5)** is the first map, written the same day as v2 from the morning's
@@ -95,7 +95,7 @@ and closed at 137 964 119 — span 290 079 B, captured 290 079 B, **zero drops**
 on the installed root reads median **8163**, −0.27 % against the previous session's five runs of
 the same image, inside the rig's own 0.15–0.68 % spread.
 
-### 41.2 The standing posture — 8185, and this session re-took it on the reference image
+### 41.2 The standing posture — 8185, and this run re-took it on the reference image
 
 | row | dhry c4, lean, `service_cadence 4`, `amix_ram 128` | n |
 |---|---|---|
@@ -105,12 +105,12 @@ the same image, inside the rig's own 0.15–0.68 % spread.
 | **B** — IVSUP lean `E663B44A`, **ARMED** | **8173** (mean 8169.6, spread 0.13 %) | 5 |
 | **A′** — return leg, disarmed | 8174 (mean 8174.3, spread 0.04 %) | 3 |
 
-**The reference row lands on 8185 exactly**, so this session's live gate edge and the
+**The reference row lands on 8185 exactly**, so this run's live gate edge and the
 pre-registered one coincide and every share and projection below reads against **8185**, as v3.2
 and v3.3 did. **Read the spread column too** — it is 0.04–0.70 % across five arms, and §45.5
 turns that number into a constraint on what this rig can still decide.
 
-### 41.3 Protocol — three things this session proved rather than asserted
+### 41.3 Protocol — three things this run proved rather than asserted
 
 Recorded because each was a standing risk this campaign had been carrying on trust.
 
@@ -124,7 +124,7 @@ Recorded because each was a standing risk this campaign had been carrying on tru
   the armed work never touched it.
 * **The as-found card CRC gap is closed.** The previous session's own finding F9 records that it
   never CRC'd the card at a menu before flashing, so its as-found identification was *functional*
-  rather than cryptographic. This session took that capture first: `0:/Z3660.bin` = `DEC21748` at
+  rather than cryptographic. This run took that capture first: `0:/Z3660.bin` = `DEC21748` at
   17:32:49, `FAILSAFE.bin` = `7E03DA03` at 17:32:56, before anything was uploaded. The CRC chain
   across the two sessions is now unbroken at both ends.
 * **A scorer that is tuned after the fact is an artefact.** The direction table's row D5 was first
@@ -192,7 +192,7 @@ table:
    the bar the design had to clear, at the calibrated f = 0.357 :  93 .. 99 cyc
 ```
 
-Both forms are given because the first mixes this session's `f` with the previous session's `S`,
+Both forms are given because the first mixes this run's `f` with the previous run's `S`,
 and the second does not — §31.2's discipline applied to the study's own headline number. **They
 agree: the budget is an order of magnitude below the bar**, and a design that prepends a
 translation to a fill starts above a budget of 14–18 cycles before it has done anything.
@@ -325,7 +325,7 @@ was true of the ratio and is not true of the counts.
 > move. §43 adds: state the counter's CADENCE relative to the event, not just its position — and
 > put the band on the quantity you are willing to be judged on.** A counter reached once per two
 > events cannot track a per-event count; a counter reached above a skipped branch cannot move at
-> all. Both of this session's two NOTEs are cadence findings, and in both the *banded* half passed
+> all. Both of this run's two NOTEs are cadence findings, and in both the *banded* half passed
 > while the *unbanded* half was refuted. **That is the pre-registration doing its job**: the
 > quantity the doc committed to is the quantity that survived.
 
@@ -358,7 +358,7 @@ historical column is quoted at a **pinned 57 cyc/transition**, while the *margin
 each capture actually measured has been **57, 54, 39 and now 40 across four sessions — a 46 %
 spread** — and `cyc/dispatch` carries that price as a **first-order term**. `profiler.md` bias
 note 2c is explicit: never pin a price a capture did not measure. **So the @57 column is a
-cross-session artefact rather than a measurement series, and this session refuses to add a fifth
+cross-run artefact rather than a measurement series, and this run refuses to add a fifth
 entry to it.**
 
 > For the reader who wants the like-for-like arithmetic anyway, the same acc/spans evaluated at 57
@@ -403,7 +403,7 @@ the single table row has been hiding.
 **Per-event prices, measured on two sessions, two builds, two bands, two very different workload
 mixes:**
 
-| quantity | this session (C2, `[40, 50]`) | spec session (B2, `[54, 60]`) | agreement |
+| quantity | this run (C2, `[40, 50]`) | spec run (B2, `[54, 60]`) | agreement |
 |---|---|---|---|
 | corrected cyc **per translate** (`XLATE`) | **199.4 – 188.0** | **197.8 – 190.3** | **the ranges overlap** |
 | corrected cyc **per walk** (`WALK`) | **2619 – 2609** | **2739 – 2733** | **4.6 %** |
@@ -415,7 +415,7 @@ v2's older 2202 cyc/walk (§9.6), measured on a different instrument generation.
 
 **And now the share, which is the number the ladder actually uses:**
 
-| | this session (C2, `[40, 50]`) | spec session (B2, `[54, 60]`) |
+| | this run (C2, `[40, 50]`) | spec run (B2, `[54, 60]`) |
 |---|---|---|
 | `XLATE` | **0.198 – 0.236 %** | 0.595 – 0.683 % |
 | `WALK` | **0.383 – 0.482 %** | 1.989 – 2.366 % |
@@ -424,7 +424,7 @@ v2's older 2202 cyc/walk (§9.6), measured on a different instrument generation.
 **§31.2 forbids differencing two bands, so the case does not rest on those columns.** It rests on
 the **band-free** rates, which carry no price at all:
 
-| per guest instruction | this session (C2) | spec session (B2) | ratio |
+| per guest instruction | this run (C2) | spec run (B2) | ratio |
 |---|---|---|---|
 | `XLATE` + `WALK` **spans / INSN** | **0.006794** | **0.021233** | **3.13×** |
 | `XLATE` / INSN | 0.00526 | 0.01436 | 2.73× |
@@ -441,7 +441,7 @@ the **band-free** rates, which carry no price at all:
 
 **The correlate is measured, not inferred.** The two windows differ in one large, directly counted
 way: **supervisor share of guest instructions is 17.98 % here against 48.77 % there — 2.71×**,
-against the translate rate's 2.73×. Across all four windows this session and the last one produced,
+against the translate rate's 2.73×. Across all four windows this run and the last one produced,
 the walk rate and the miss rate are **monotone in supervisor share** (16.11 % → 17.98 % → 35.16 % →
 48.77 % gives `ATC_MISS`/INSN 0.00064 → 0.00077 → 0.00236 → 0.00346), and the dopc hit rate falls
 with it (96.36 % → 95.74 % → 85.03 % → 78.21 %). **Two points do not establish a law and four do
@@ -457,7 +457,7 @@ cleanly into two clusters and the split has a name.
 > reads 3.74–4.13 % against **0.69–0.77 %**.
 
 **Which window should the ladder use?** The ladder's Amdahl denominator is **8185 — a lean
-dhrystone number**. This session's window was `PROFZ`-fenced around **one `./dhry` run at a pinned
+dhrystone number**. This run's window was `PROFZ`-fenced around **one `./dhry` run at a pinned
 100 000 count**; the previous session's was a ~12 s window carrying nearly half supervisor time.
 **The fenced window is the one denominated like the number the ladder converts into.** That is the
 basis §45.7 recommends on, and both are shown throughout so the reader can take the other one.
@@ -473,7 +473,7 @@ A walk is removed only by a *larger or differently structured ATC*, which is a d
 a different cost site and no measured classification. **So the 60 % reclaim this map has carried
 since v2 has been applied to a bucket that is 66–78 % walks:**
 
-| | this session's window | spec session's window |
+| | this run's window | spec run's window |
 |---|---|---|
 | `WALK` share of the `XLATE`+`WALK` bucket | **65.9 – 67.1 %** | **77.0 – 77.6 %** |
 | the fast path's actual target (`XLATE` only) | **0.198 – 0.236 %** of profile | 0.595 – 0.683 % |
@@ -518,7 +518,7 @@ tiny population, and the prize scales with the population, not with the techniqu
 
 ### 45.5 A §30.3 discriminator here: unnecessary, and unbuildable
 
-The brief §30.3 lays down is *buy the classification before funding the rung*. **For this row the
+The rule §30.3 lays down is *buy the classification before funding the rung*. **For this row the
 classification was bought by construction** (§45.1, §33.2) — a table walk's dependent guest-memory
 loads are §30.3 step 2's own worked example. So a discriminator here would not be buying a
 classification at all; it would be buying the **size**, which is what §38.6's switch bought for the
@@ -533,7 +533,7 @@ unsound, measurement-only, correctness-gated, cost charged at zero by constructi
 
 ```
    the signal such a switch would produce  :  0.20 .. 0.68 %  (the whole XLATE half, free)
-   this session's within-arm spreads       :  0.04 / 0.13 / 0.28 / 0.56 / 0.70 %  (five arms)
+   this run's within-arm spreads       :  0.04 / 0.13 / 0.28 / 0.56 / 0.70 %  (five arms)
    the +/-0.5 % band the disarm control used, and passed inside
    SS38.6's own wall-clock gate            :  1.5 %  -- set there for precisely this reason
 ```
@@ -581,7 +581,7 @@ rung 2's pre-registration rather than §30.3's:
 
 **The band, with every step shown:**
 
-| | this session's window (pinned dhry — **the recommended basis**) | spec session's window (kernel-heavy) |
+| | this run's window (pinned dhry — **the recommended basis**) | spec run's window (kernel-heavy) |
 |---|---|---|
 | `XLATE` share — the fast path's actual target | 0.198 – 0.236 % | 0.595 – 0.683 % |
 | × 60 % reclaim (carried, unmeasured) | 0.119 – 0.142 % | 0.357 – 0.410 % |
@@ -608,7 +608,7 @@ has already learned to respect the hard way.**
 
 ## 46. THE MAP v3.4 — the ladder after the strike
 
-### 46.1 The shares, on this session's own window and band
+### 46.1 The shares, on this run's own window and band
 
 Arm **C2** — the `IVSUP` prof build **disarmed**, which is the reverted-tree posture plus one
 not-taken branch. Cadence 4, this capture's own band **`[40, 50]`**, ceiling **58 bound by
@@ -738,7 +738,7 @@ appends the ledger.
 `T` was charged at **zero by construction**, so nothing here measures whether a translation can be
 threaded out of the fetch that already happened (§38.3's observation). That question is moot for
 this study and **live for any successor design**, which inherits §38.6 item 2 verbatim. Likewise
-`DOPCFILL` and the miss path still cost what §38.1 and this session's 85.6 – 75.6 cyc/miss say
+`DOPCFILL` and the miss path still cost what §38.1 and this run's 85.6 – 75.6 cyc/miss say
 they cost; what is struck is *narrowing invalidation by physical address* as a way to recover them.
 
 ### 47.2 `f` is an upper bound on **this workload**, and the workload is now known to matter
@@ -778,7 +778,7 @@ Of §40.5's list, **one is discharged and one recurs in a new form**:
   The `IVSUP` experiment put `IV_SUPPRESSED` at counter id **46** — the id `SPEC_HIT` briefly held
   and gave back — and unlike `SPEC_HIT` it **did** reach captures. **Whether it should ever be named
   in `COUNTER_NAMES_V2` depends entirely on whether the `IVSUP` switch is reverted from the
-  firmware tree**, which is a Z3660-lane decision this document does not make and this session did
+  firmware tree**, which is a Z3660-lane decision this document does not make and this run did
   not record. §40.5's rule applies unchanged and both ways: **name a counter if and only if
   shipping firmware emits it** — a name for an id no shipping build emits puts a row in the table
   that can only ever report `absent`. **This is a gate on the revert, not an action.**
@@ -795,7 +795,7 @@ Of §40.5's list, **one is discharged and one recurs in a new form**:
   available discriminator between two windows. This is a bigger comparability hazard than the
   price band and there is currently no warning for it.
 * **NEW: the `COUNTER_NAMES_V2` gap recorded in §40.5 is unchanged** — the table names 39 counters
-  against the 46 the reverted-`SPEC` firmware defines (47 in the `IVSUP` builds this session
+  against the 46 the reverted-`SPEC` firmware defines (47 in the `IVSUP` builds this run
   measured, which are off the card). The append seam still handles ids past
   39 correctly; the counter *table* still does not print them. Out of scope here, as before.
 
@@ -817,7 +817,7 @@ Per `docs/METHOD.md`, appended to §18.4, §26.5, §34.6 and §40.6. Nothing is 
 | **§38.5's miss-rate confound is "mechanism-shaped and unmeasured"** | §40.2 | **NAMED.** The two bases differ with the window's **supervisor share** — 48.77 % against 17.98 %, against a 2.73× translate-rate ratio — and every miss-driven bucket in the file inherits it. Four windows, two clusters, monotone in the walk and miss rates. Still not a law (§47.4). §45.2 |
 | **`DOPCFIND` cyc/dispatch as a four-point series** | §39.3, §32.2 | **THE SERIES IS THE DEFECT, NOT THE POINT.** A clean in-band fourth point was taken — **85.12 – 75.12 cyc/dispatch at `[40, 50]`**, the first capture in the series whose full bracket is usable — but the historical column is pinned at 57 while the measured marginal price has been 57/54/39/40, a **46 % spread on a first-order term**. F6 stays OPEN. §44 |
 | a banner's text is a reliable console echo of a mode change | this campaign's arm/disarm detectors | **REFUTED on a two-core box.** Two cores share one unlocked UART; an arm banner arrives spliced and unmatchable. **A counter is the echo, not a string** — which is why `IV_SUPPRESSED` is compiled into every variant including the lean one. §41.3 |
-| a bare *>2 %* "unchanged" rule is a scorer | this session's own first pass at D5 | **THE SCORER WAS THE ARTEFACT.** It flagged `IV_DMA` 6 → 4. Rescored on a rule stated rather than tuned (≤1 % **or** ≤5 counts), all nine causes are unchanged. **State the rule with the direction it scores.** §41.3 |
+| a bare *>2 %* "unchanged" rule is a scorer | this run's own first pass at D5 | **THE SCORER WAS THE ARTEFACT.** It flagged `IV_DMA` 6 → 4. Rescored on a rule stated rather than tuned (≤1 % **or** ≤5 counts), all nine causes are unchanged. **State the rule with the direction it scores.** §41.3 |
 
 ---
 ---
@@ -841,11 +841,11 @@ the experiment's own gate cannot beat the generated handlers it replaces.
 **And v3.3 pays the debt §33.4 opened.** The fill-path price the physical-index study is sized
 against was measured while the rig was up: **75.9 – 81.9 cyc/miss at calibration band
 `[54, 60]`**, against the **62–64** the design carries. §38 re-runs §22.3's and §24.4's
-arithmetic against it, on one band, on this session's own capture — both the prize side and the
+arithmetic against it, on one band, on this run's own capture — both the prize side and the
 bar side — and returns a funding recommendation.
 
 Nothing here comes from a new instrument. §37 adds two things the instrument cannot do that
-this session found out the hard way, and one of them (§37.2) is a *tool*, not a caveat.
+this run found out the hard way, and one of them (§37.2) is a *tool*, not a caveat.
 
 ### 35.1 Provenance
 
@@ -875,7 +875,7 @@ requested, 270 505 B received, zero drops).
 | `6ADABE4A` — `SPEC` disarmed, same boot | 8109 — **−1.07 %**, the machinery's standing cost |
 | `6ADABE4A` — `SPEC` armed, return leg | 7573 (reproduces the first armed arm to −0.07 %) |
 
-**The standing posture is 8185-class and has not moved.** §27.2's figure stands; this session
+**The standing posture is 8185-class and has not moved.** §27.2's figure stands; this run
 simply re-took it on the true rung-2 binary. Read every share and every projection in §§38–39
 against **8185**, as v3.2 did.
 
@@ -1015,7 +1015,7 @@ zero. Counted from this binary, what is left to remove is:
 ```
 
 **+0.59 % is below the +0.90 % PAY floor before the −1.07 % is charged**, and the −1.07 % is not
-a projection — it is this session's measured disarm row, a property of inlining *anything* into
+a projection — it is this run's measured disarm row, a property of inlining *anything* into
 this run loop (register pressure → a spilled meta byte → three instructions to get it back).
 Note also that **the count model has just been demonstrated optimistic by 3–4× in the other
 direction**, and that 36 inlined bodies would raise the very pressure that produced the −1.07 %.
@@ -1209,7 +1209,7 @@ paid rather than saved, and is not the number to carry.
 ### 38.2 The prize side — each removed miss is worth 6 – 15 % more than §24.4 assumed
 
 §24.4's saving per removed miss is the fill **plus** the opcode fetch a miss forces and a hit
-does not: `DOPCFILL` cyc/miss + `FETCHOP` cyc/miss. Re-derived **identically**, on this session's
+does not: `DOPCFILL` cyc/miss + `FETCHOP` cyc/miss. Re-derived **identically**, on this run's
 own arm B2 at its own band (`INSNS` 71 590 065, `DOPC_MISS` 15 593 227 ⇒ **0.21781 misses per
 guest instruction**):
 
@@ -1324,7 +1324,7 @@ belonging in the design's pre-registration:
    **narrows** it — the flushed line's entries still go. A by-address invalidation legitimately
    evicts whatever actually matches.
 2. `IV_FLUSH`'s locality need not resemble `IV_CACR_SKIP`'s. One calibration point is one point.
-3. This session's own hit rate (**85.04 %** disarmed) is level with rung 1c's post-fix 85.32 %, so
+3. This run's own hit rate (**85.04 %** disarmed) is level with rung 1c's post-fix 85.32 %, so
    the interpolation is being extended from the same place it was calibrated, not from a nearer
    one.
 
@@ -1446,7 +1446,7 @@ the design round**, with §33.4's pre-registration list re-ordered against the n
 ### 39.1 The shares
 
 Arm **B2** (`SPEC` OFF on the `SPEC` prof build) — the closest capture to the standing
-`DEC21748` posture this session took, differing from it by **one not-taken branch on the fill
+`DEC21748` posture this run took, differing from it by **one not-taken branch on the fill
 path and the +5 disarmed-hot-path instructions** that cost the measured −1.07 %. Cadence 4,
 swept this capture's own band `[54, 60]`, ceiling **60 bound by `TAILADV`**, `TAILSAMP` excluded
 from the denominator (corrected total 477.05 @54 / 400.17 @60 cyc/INSN).
@@ -1481,7 +1481,7 @@ much of each bucket is the profiler's own bracket pair — **not** how much is i
 > **⚠ SUPERSEDED by §46.2.** Row **#1** (physical-index dopc) is **STRUCK** — §42, `f` = 0.0787.
 > Row **#2** (ATC fast path) is **re-priced and both halves of its row withdrawn**: the bucket is
 > 66–78 % table walks a fast path does not remove, and the 2.58–3.05 % share it was applied to is a
-> kernel-heavy window's — §45. Rows #3 and #4 keep their rank and are re-read on this session's own
+> kernel-heavy window's — §45. Rows #3 and #4 keep their rank and are re-read on this run's own
 > window and band. Row J rises to 2.19 – 2.35× on a different band, meaning nothing (§31.2).
 > **Kept unedited.**
 
@@ -1530,7 +1530,7 @@ carried in one word, with the two rows that changed marked.
 > across four sessions — a 46 % spread on a first-order term. §44 refuses to add a fifth entry to
 > that column. **Kept unedited.**
 
-§32.2 left F6 OPEN with both candidates weakened. This session adds a point, and unlike r3's it
+§32.2 left F6 OPEN with both candidates weakened. This run adds a point, and unlike r3's it
 is taken at a price **inside its own capture's usable band** — 57 lies within `[54, 60]`, whereas
 r3's `[39, 50]` did not contain it, which is what §32.2's asterisk was about:
 
@@ -1538,7 +1538,7 @@ r3's `[39, 50]` did not contain it, which is what §32.2's asterisk was about:
    s19 (pre-rung-2, no tables)      60.83   in-band ([57, 68])
    r2  (rung 2,     2 KB)           70.26   in-band ([54, 66])      <- the +15.5 %
    r3  (rung 2+3,   3 KB)           70.53   OUT of band ([39, 50])  -- §32.2's asterisk
-   this session (rung 2 + SPEC disarmed)     73.75   in-band ([54, 60])
+   this run (rung 2 + SPEC disarmed)     73.75   in-band ([54, 60])
 ```
 
 **It is not a clean fourth point and must not be quoted as one.** This build carries the `SPEC`
@@ -1652,7 +1652,7 @@ Of §34.5's five items, **three are discharged**:
 
 * **`docs/profiler.md`'s `tcnt[DOPCFILL] == DOPC_MISS` identity** now carries its fault term and
   the shortfall prints as a **bounded `[PROF] l note:`** rather than a warning (`Z3660 6afc8f9`;
-  the prof image built after it reads `2841AD27`). The 0.0087 % gap this session logged twice
+  the prof image built after it reads `2841AD27`). The 0.0087 % gap this run logged twice
   (1350 in 15.6 M) is inside the bound and is no longer a thing to chase.
 * **`tcnt[BLKREC] <= tcnt[DOPCFIND]`** is restated as what the counters actually bound — spans
   against calls, with `BLKREC`'s nesting named (`004aa6d`).
@@ -1676,7 +1676,7 @@ Of §34.5's five items, **three are discharged**:
 
 **One symbolizer action that is explicitly NOT owed, recorded so nobody does it.** The experiment
 added `SPEC_HIT` at counter id **46**, and the revert removed it with the rest of the machinery —
-`Z3660_PROF_C_COUNT` is back to **46**. The id existed only in the three images this session
+`Z3660_PROF_C_COUNT` is back to **46**. The id existed only in the three images this run
 measured and **never reached a capture `tools/prof-symbolize` consumed**. It must **not** be added
 to `COUNTER_NAMES_V2`: adding a name for a counter no shipping firmware emits would put a row in
 the table that can only ever report `absent`, which is the inverse of the `ATC_HIT` defect the
@@ -1709,7 +1709,7 @@ Per `docs/METHOD.md`, appended to §18.4, §26.5 and §34.6. Nothing is deleted.
 | "the physical index's margin is thin, and the cost site is what killed rung 1b" | §17.3, §22.3, §24.4 | **RE-AIMED.** On the measured price the break-even translation budget is **93 – 186 cyc** depending on `f` — above the whole fill it precedes in every case. The thin quantity is **`f`**, not `T`. §38.3 |
 | `LOOPRES` as *"the true residue"* at 18.52 – 15.37 % | §33.1, §33.3 row 4 | **BAND ARTEFACT, PARTLY.** At `[54, 60]` it reads 11.92 – 8.40 % and is **87 % bracket cost** at the ceiling price, with its own zero-crossing only 15 % above the ceiling. The withholding stands and now has a second, independent reason. §37.2 |
 | "the revert is measured but not performed" — card and repo are two binaries that merely measure the same | §34.1 | **CLOSED, CRYPTOGRAPHICALLY.** The reverted tree rebuilds `BOOT-lean.BIN` byte-for-byte to `DEC21748`; the card holds `DEC21748`, CRC-gated on the card twice. §35.2 |
-| `DOPCFIND` cyc/dispatch at a pinned 57 as a comparable series | §32.2's three-point table | **ONE POINT WITHDRAWN, ONE ADDED.** r3's 70.53 was quoted at a price outside its own band `[39, 50]`; this session's 73.75 is in-band — but on a build carrying the `SPEC` machinery disarmed, so it is not a clean point either. The clean series needs a prof capture on the reverted tree. §39.3 |
+| `DOPCFIND` cyc/dispatch at a pinned 57 as a comparable series | §32.2's three-point table | **ONE POINT WITHDRAWN, ONE ADDED.** r3's 70.53 was quoted at a price outside its own band `[39, 50]`; this run's 73.75 is in-band — but on a build carrying the `SPEC` machinery disarmed, so it is not a clean point either. The clean series needs a prof capture on the reverted tree. §39.3 |
 
 ---
 ---
@@ -1788,7 +1788,7 @@ echo-confirmed in both directions. **The substantive revert is a firmware-repo a
 
 ## 28. Rung 2 — the accessor fast path: KEPT, and the number is **+25.17 %**
 
-§25.1's brief, built as written: the `dpagecache` hit path resolved inline, behind a `DFAST`
+§25.1's plan, built as written: the `dpagecache` hit path resolved inline, behind a `DFAST`
 console switch, with a host state-equivalence corpus as the guard. It cleared its pre-registered
 bar (`dhry c4 ≥ 6900`) by 18.6 %.
 
@@ -2210,7 +2210,7 @@ pin is itself confounded — so this is evidence, not proof.)
 **Candidate (a) is not confirmed either.** Rung 2 read its own opposite-signed hit-rate moves
 (82.91 → 79.05 % at cadence 1 but 78.17 → 79.88 % at cadence 4) as the signature of a mix change.
 Rung 3 adds a third point, and it does not fit: the dopc hit rate is **78.34 %** here against
-**79.87 %** in rung 2 and **78.17 %** in s19 — this session sits *below* rung 2 and level with
+**79.87 %** in rung 2 and **78.17 %** in s19 — this run sits *below* rung 2 and level with
 s19 — while `DOPCFIND` sits **level with rung 2 and 16 % above s19**. Supervisor share: 48.74 %
 here, 53.24 % rung 2, 49.28 % s19 — same story. **The cost tracks neither quantity**, so if mix
 is the mechanism it is not through the hit rate or the privilege split, and no other form of it
@@ -2234,7 +2234,7 @@ has been named.
 
 ### 33.1 The shares
 
-Rung 3's **`IFAST`-off arm** — the closest thing this session took to a rung-2-only profile, and
+Rung 3's **`IFAST`-off arm** — the closest thing this run took to a rung-2-only profile, and
 therefore the shape the machine is in once the rung-3 revert lands. **Close, not identical**: the
 arm still carries rung 3's disarmed table, i.e. §29.5's +19 instructions per served fetch, which
 inflates row H by that much. Cadence 4, swept this boot's
@@ -2944,7 +2944,7 @@ honest projection is **+1.8 %** — against **+7.8 to +8.1 %** for the accessors
 **+9.3 to +9.7 %** in the standing posture. **A bucket being newly visible is not the same as
 it being newly attackable.**
 
-Both briefs below are written to be dispatched as-is, in §11's shape, and both pre-register
+Both plans below are written to be run as-is, in §11's shape, and both pre-register
 their numbers **before** anything is built.
 
 ### 25.1 FIRST — the accessor fast path (`READ` + `WRITE`)
@@ -3100,7 +3100,7 @@ avoiding — a warning that is always wrong teaches operators to ignore warnings
    on a cache-off arm (§21.2).
 3. **The price bracket should carry a ceiling.** The firmware knows `acc[b]` and `spans[b]` and
    could refuse to advertise an in-bucket end above `min_b(acc[b] / spans[b])`, or at minimum
-   print that ceiling beside the bracket. This session's bracket moved **+42 %** against the
+   print that ceiling beside the bracket. This run's bracket moved **+42 %** against the
    last and **its advertised upper end was arithmetically impossible** (§20.2). Sweeping to the
    printed end is a trap the doc's current method walks into.
 
@@ -3224,7 +3224,7 @@ are worth:**
 * the **dhrystone row MISSED**: the pre-registration asked +8.4 % and got −0.8 %;
 * the **disk row is unscoreable, not merely missed** — its baseline was taken on the
   *profiling* build, so the pre-registration compared a prof baseline against a lean target.
-  Against this session's own lean OFF arm (1106.4 kB/s) the fast path scores **−0.38 %**;
+  Against this run's own lean OFF arm (1106.4 kB/s) the fast path scores **−0.38 %**;
 * the **`bzero` bench guard missed by 1.1 points** — 22.07 % → 4.08 % raw / 4.46 % busy, a
   **79.8 % reclaim** against the map's own 80 % model, and a `< 3 %` threshold that the same
   model makes unreachable (perfect success is 4.42 %). **The threshold was wrong, not the
@@ -3268,7 +3268,7 @@ collect from it.**
 26.1 % on boot and disk. And the misses are **re-warm, not capacity** — 274–292 misses per
 invalidation across three unrelated workloads, against a 4096-entry cache. A figure that does
 not track the workload's code footprint is not a capacity miss, and the indicated fix is a
-narrower invalidation rather than a bigger cache. That reading is what dispatched rung 1b.
+narrower invalidation rather than a bigger cache. That reading is what started rung 1b.
 
 **`FETCHOP + FETCHEX` cleared its gate at every price**: 28.65 % → **12.64 % raw, 11.27 % at
 32 cyc/transition, 10.48 % at 43**, against a pre-registered `< 18 %`. `FETCHOP` fell from
@@ -3729,7 +3729,7 @@ card-1 kernel the system boots:
     build/unix-040-i46-i48-i49-i50-i51-i52f-hg-z3660-target-CARD1-ced0s1
     ET_REL, --load-base 0x08000000, 5475 .text symbols, 1875 assembler-locals filtered
 
-Three things about this session make it the one to rank from, and each of them was a
+Three things about this run make it the one to rank from, and each of them was a
 named defect in the last one:
 
 * **The clock is right and says so.** The boot line reads `ARM clock 1099989200 Hz
@@ -4491,7 +4491,7 @@ retro-fitted to whatever the change turns out to deliver.
 > rung 1b then demonstrated, and §11.1's *"the first thing to check is the TRIGGER, not the
 > host operation"* is the check the mean-chunk-length row exists to make.
 
-Two items, in this order. Each is written to be dispatched as-is.
+Two items, in this order. Each is written to be run as-is.
 
 ### 11.1 FIRST — the block-idiom fast path, starting with `bzero`
 

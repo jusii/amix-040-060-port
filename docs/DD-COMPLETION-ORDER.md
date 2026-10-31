@@ -1,14 +1,14 @@
 # dd.c completion order: issue the next command before `iodone()` (2026-09-27)
 
-**Status: EMU run (DL-13, 2026-09-28): not refuted, not proven. HW: not run.** The acceptance is
+**Status: EMU run (2026-09-28): not refuted, not proven. HW: not run.** The acceptance is
 a boot, and this document says why that matters more than usual here.
 
-DL-13 in Amiberry, with the WD vehicle and the emulated Z3660:
+The run in Amiberry, with the WD vehicle and the emulated Z3660:
 - Row 1, a board-less boot to multiuser, boots clean with this fix.
 - The double issue was not provoked, not even on the control kernel without the fix: the
   mailbox trace shows zero duplicate commands. So the run cannot show that the fix removes it.
 - Both kernels stalled the same way. The stall belongs to the emulator's Z3660 path, not to this
-  fix: on metal the same load completes (T-8).
+  fix: on metal the same load completes.
 
 Build: `relink-040-dd.sh` (post-pass, before `relink-040-fpe.sh`), `src/dd_order040.s` (two
 shims), `src/patch_dd_order.py` (two relocation retargets). Addresses are those of every base of
@@ -117,7 +117,7 @@ more buffers queued the next command was issued twice. **That is a hypothesis fo
 an established cause**: the record itself leaves the cause open, and a double issue needs two
 queued buffers before the banner. The other candidate — that issuing before `iodone` is itself
 unsafe on the stock A3091/SDMAC host — is shared by this unit. So the argument above settles the
-machine-level correctness of the shims, and only a boot settles the rest: DL-13 (emulator, the
+machine-level correctness of the shims, and only a boot settles the rest: a boot (emulator, the
 WD vehicle and the emulated Z3660) is the acceptance, and a board-less boot to multiuser is its
 first row.
 

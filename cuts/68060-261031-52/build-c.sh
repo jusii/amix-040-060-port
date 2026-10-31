@@ -5,8 +5,8 @@
 # k46 paula cut (2026-10-28): the -51 recipe (port 87b8a88) at port b5f9bc1 = amix-dlm e45b061, kabi k46.1.3,
 # with relink-040-audio.sh (amix-paula d82e32d) between f6 and rth1 (AUDIO=0 leaves it out: the refusal control).
 # k46 re-cut (2026-10-28): the -91 recipe (port 88dcfc0, base 284154a3) with the dlm core at amix-dlm 7b07bce.
-# S5-46 re-cut (port 88dcfc0, fresh tree, base rebuilt): the k46 cut without ufs and s5 (CARVE=1, default; CARVE=0 = the same chain uncarved, the control), port k46-module + relink-040-carve.sh.
-# Derived from the kern46m dry build (S4-62 piece 1): the -75 recipe (no static z3660scsi) at amix-dlm 178a47b (core 0001-0041, DDI 1.2 DMA,
+# Re-cut of 2026-10-27 (port 88dcfc0, fresh tree, base rebuilt): the k46 cut without ufs and s5 (CARVE=1, default; CARVE=0 = the same chain uncarved, the control), port k46-module + relink-040-carve.sh.
+# Derived from the kern46m dry build: the -75 recipe (no static z3660scsi) at amix-dlm 178a47b (core 0001-0041, DDI 1.2 DMA,
 # kabi k46.1.2, the arena 16-aligned) without the z3660 pass (Z3660=1 puts it back);
 # with the four-card sd/dd/ct pass after dd; the dlm pass adds the halt hook, the sd seam, rth1_nomarc -> dlm_marc_root, bdevsw[20] freed.
 # SD4A=1 / SD4I=1 add the a4091 / ide passes (the three-controller proof, not of record).
@@ -14,7 +14,7 @@
 # SD4=0 rebuilds -61's chain from this tree (the control: every stage = -61's).
 # The base is relink-040.sh's output with cputype a size-4 object (build/b-new 284154a3, as -54).
 #   base -> dd -> z3660 Z3660_NET=off -> f4arms -> f6 -> rth1 DLM=1 -> kinfo DLM=1 -> dlm -> fpe (stamped)
-# Steps 9-10 (relink-040-dlm.sh --fill, with mkabi.py) run in post-m.sh after the W-D7 probe inject.
+# Steps 9-10 (relink-040-dlm.sh --fill, with mkabi.py) run in post-m.sh after the support-probe inject.
 # Not packaged.  usage: build-m.sh [tag] [base]   (tag default m, base default build/b-new)
 set -e
 W=${W:?}; PAULA=${PAULA:?}

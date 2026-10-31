@@ -1168,8 +1168,8 @@ the path.
 
 ## 17. PART SEVEN — `i10s`, the `segvn_faultpage` decision audit (built dormant; prediction only)
 
-This section is the **instrument and its prediction, not a measurement.** The run is the orchestrator's
-next step; nothing below has been observed. It is written down first so the run checks a *stated*
+This section is the **instrument and its prediction, not a measurement.** The run is the next
+step; nothing below has been observed. It is written down first so the run checks a *stated*
 prediction rather than being read after the fact.
 
 ### 17.1 What it is, and where it hooks
@@ -1413,7 +1413,7 @@ the genesis directly, which no wrapper probe could.
 
 ## 21. PART ELEVEN — `i10d`, the CPU-independent brk/sbrk ring tracer (dormant; cross-CPU)
 
-User ruling: sh is the SAME binary on 030/040/060, so the desync (arena top `0x800152A0`
+sh is the SAME binary on 030/040/060, so the desync (arena top `0x800152A0`
 past the break `0x80014FB4`) must be the kernel granting a different brk result per CPU for
 identical requests. `i10d` records a ring of the last 24 brk calls — `{newbrk, p_brkbase,
 p_brksize before, p_brksize after, brkend after, ret}` — so the same probe run on the 040,
@@ -1450,7 +1450,7 @@ requests, independent of 2 KiB vs 4 KiB.
   the 040's demand-fill fails (`as_fault`→`segvn`, exactly where i10a/i10c localized it). The
   4 KiB-rounded segment ends at `round4k(0x80014FB4) = 0x80015000`, still below `0x800152A0`,
   so the write is past coverage on both — but only the 040 fails to grow it in.
-- **ALTERNATIVE (the ruling's hypothesis): the 040 ring shows a SMALLER `brkend`** than the
+- **ALTERNATIVE (the same-binary hypothesis): the 040 ring shows a SMALLER `brkend`** than the
   030 for the same `newbrk` (under-grow: `brkend < newbrk`, or below the 030's grant). Then
   brk itself under-grows on the 040/4 KiB path — a brk/grow bug, and the fix is there.
 

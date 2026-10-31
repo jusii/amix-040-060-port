@@ -89,7 +89,7 @@ if [ "$FPE" = 0 ]; then
 fi
 
 # ---------------------------------------------------------------- 0.6 DRIVER-LINE-8 / -9
-# In r6 by the owner's decision (Q-6.1, 2026-10-06), so they live here for the reason ISSUE-69 and
+# Default since r6 (2026-10-06), so they live here for the reason ISSUE-69 and
 # DRIVER-LINE-7 do: every 040/060 kernel of this line passes through this script.  Both are LINKS,
 # so they run BEFORE this script's own `ld -r` and its vector retargets (never after them), in the
 # order ttcompat -> pgrsv -> isp060 -> fpe; the ttcompat bytes (step 8.6) sit in the base and are
@@ -179,7 +179,7 @@ for f in "$FPESRC"/*.c; do
 done
 N=$(echo $FPEOBJS | wc -w)
 [ "$N" = 20 ] || { echo "[FAIL] $N objects, expected 20 (files.fpe lists 20)"; exit 1; }
-# T-9, second half: with -Dconst=__const__ a `const` table stops being plain initialised data
+# The same flags' second half: with -Dconst=__const__ a `const` table stops being plain initialised data
 # and gcc puts it in .rodata (fpu_cordic.c: atan_table and fpu_cordic_inv_gain1, 0x31c bytes,
 # which were in .data until 2026-09-28).  The kernel image has .text and .data and nothing
 # between them, so a .rodata makes the link's text/data non-contiguous.  Fold it back into
@@ -187,12 +187,12 @@ N=$(echo $FPEOBJS | wc -w)
 # The fold itself (tools/fold-rodata.sh) is shared with relink-040-cdfs.sh.
 . "$HERE/tools/fold-rodata.sh"
 for o in $FPEOBJS; do fold_rodata "$o"; done
-# T-9 (2026-09-28): -traditional makes the stock <sys/types.h> define `volatile` away, and gcc
+# 2026-09-28: -traditional makes the stock <sys/types.h> define `volatile` away, and gcc
 # then deletes every spl()/splx() whose output is unused and every MMIO `volatile`.  The toolchain
 # passes -Dvolatile=__volatile__ now; tools/spl-gate.py proves it for this object: G1 = the macro
 # dump keeps `volatile`, G2 = every function that calls spl writes %sr (per function).
 # The emulator calls no spl, so G2 has nothing to require here; G1 still has to pass for every unit.
-echo "[*] T-9 gates G1/G2 over the 20 emulator units"
+echo "[*] spl gates G1/G2 over the 20 emulator units"
 for f in "$FPESRC"/*.c; do
 	b=$(basename "$f" .c)
 	run_step all python3 "$HERE/tools/spl-gate.py" --cc "$CC" --object "$OBJDIR/$b.o" \
@@ -335,8 +335,8 @@ run_step all python3 "$HERE/src/patch_setuid_hook.py" "$OUT" --check
 
 # ---------------------------------------------------------------- 8.6 DRIVER-LINE-7
 # Stock ttcompatopen leaves t_state/t_iocid/t_ioccmd uninitialised, and a console stream can then
-# panic the kernel at boot ("ttcompat: unexpected ioctl acknowledgment").  In the r6 card set by the
-# owner's decision (2026-10-05), so it lives here for the same reason as ISSUE-69: every kernel of
+# panic the kernel at boot ("ttcompat: unexpected ioctl acknowledgment").  In the r6 card set
+# (2026-10-05), so it lives here for the same reason as ISSUE-69: every kernel of
 # this line passes through this step.  Idempotent: a chain that ran relink-040-ttcompat.sh earlier
 # gets [skip].  TTCOMPAT_INIT=0 is the deliberate opt-out (reproducing a pre-r6 image).
 if [ "${TTCOMPAT_INIT:-1}" = 0 ]; then
@@ -358,7 +358,7 @@ fi
 
 # ---------------------------------------------------------------- 8.8 DRIVER-LINE-10
 # Stock TCP's lower read queue holds 4096 bytes, and ipintr frees, uncounted, every datagram that does
-# not fit in one service pass: the 4th full segment of each burst.  Owner decision D11 (2026-10-21);
+# not fit in one service pass: the 4th full segment of each burst.  Default since 2026-10-21,
 # here for the reason ISSUE-69 and DRIVER-LINE-7 are.  One .data longword, so after the link.
 # Idempotent; TCP_HIWAT=0 is the deliberate opt-out.
 if [ "${TCP_HIWAT:-1}" = 0 ]; then

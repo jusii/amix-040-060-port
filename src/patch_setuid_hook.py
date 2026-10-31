@@ -12,8 +12,8 @@
 # through to the stock range check and returns EINVAL, like every other negative uid.
 #
 # This is the one place this line's shipped bytes deliberately differ from upstream inside the
-# stock prefix: upstream records ISSUE-69 and leaves the kernel unpatched (owner decision on
-# this side, 2026-09-28).
+# stock prefix: upstream records ISSUE-69 and leaves the kernel unpatched; this line
+# patches it (2026-09-28).
 #
 #   python3 src/patch_setuid_hook.py KERNEL          patch (idempotent)
 #   python3 src/patch_setuid_hook.py KERNEL --check  report; exit 0 = patched, 1 = unpatched

@@ -5,7 +5,7 @@
 #   PORT_GIT     a clone of this repository that has 3c6160d and the patcher revisions below (default: this one)
 #   AMIX         an amix clone that has e45b061 (amix-dlm's history, kept by the move-in: the module core and kit)
 #   PAULA        amix-paula with 62fdcab (the audio driver's three patchers)
-#   KT, KT_REV   amix-kerntools and the revision -51 used (bd091b4): its tools/ and contracts/ (sddevsize and W-D7
+#   KT, KT_REV   amix-kerntools and the revision -51 used (bd091b4): its tools/ and contracts/ (sddevsize and support-probe
 #                injectors, emit-family-chains, k0-gates).  Not public yet: they move to amix kernel/k30/tools.
 #   GCA          gcc-cross-amix's build/ (env.sh; toolchain/gcc-cross-amix.pin, gcc 2.7.2.3 8949028)
 #   AMIX_SYSTEM  amigaux/amix-system (kernels/2.1c/unix, the stock kernel the relinks check against)

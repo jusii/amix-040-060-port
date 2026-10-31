@@ -2,7 +2,7 @@
 # relink-040-ttcompat.sh -- EXPLICIT: clear the three ttcompat state fields the stock open leaves
 # uninitialised (DRIVER-LINE-7, src/patch_ttcompat_init.py; 2026-10-05).
 #
-# Since r6 (owner's decision, 2026-10-05) the fix is DEFAULT: relink-040-fpe.sh applies it in its
+# Since r6 (2026-10-05) the fix is DEFAULT: relink-040-fpe.sh applies it in its
 # step 8.6 to every kernel, before it stamps the build id (TTCOMPAT_INIT=0 opts out).  This pass stays
 # for applying it explicitly earlier in a chain; fpe then reports [skip].  Like fpe's step, it must run
 # BEFORE the build id is stamped.  It links nothing; it is a same-length byte patch located by symbol.

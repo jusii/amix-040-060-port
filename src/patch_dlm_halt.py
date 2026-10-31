@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # patch_dlm_halt.py -- mdboot's calls of haltsys and rtnfirm onto the halt-pass shims of
-# src/dlm_halt040.s (amix-dlm core patch 0030, S4-07; 2026-10-26).  Run by relink-040-dlm.sh after
+# src/dlm_halt040.s (amix-dlm core patch 0030; 2026-10-26).  Run by relink-040-dlm.sh after
 # its link, when the core defines dlm_halt.
 #
 # mdboot has exactly one `jsr haltsys` and one `jsr rtnfirm`, each an R_68K_32 relocation in its

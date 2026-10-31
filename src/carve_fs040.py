@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-# carve_fs040.py -- take ufs and s5 out of a k46 base, dead and zeroed in place (amix-dlm S5-11,
+# carve_fs040.py -- take ufs and s5 out of a k46 base, dead and zeroed in place (amix-dlm
 # contract C4-6; 2026-10-27).  Run by relink-040-carve.sh on relink-040.sh's output.
 #
 # A module kernel of this line loads ufs as a core-tier module (amix-dlm tools/carve.py wraps the
-# stock object as tools/fsobj-patch.py patches it for 4 KiB pages); s5 has no k46 module (amix-dlm
-# S5-37).  So the base keeps neither.  The objects' bytes stay where they are and nothing moves:
+# stock object as tools/fsobj-patch.py patches it for 4 KiB pages); s5 has no k46 module
+# in amix-dlm.  So the base keeps neither.  The objects' bytes stay where they are and nothing moves:
 # every fixed-address pass of this port addresses the base by offset, and many of them lie past
 # the ufs range.  Instead, in the base:
 #

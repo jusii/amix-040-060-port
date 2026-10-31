@@ -1,4 +1,4 @@
-# ufs: carved by tools/carve.py (S5-04), core tier, built per kernel cut
+# ufs: carved by tools/carve.py, core tier, built per kernel cut
 $modtype misc
 $class boot
 $match always

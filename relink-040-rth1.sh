@@ -1,6 +1,6 @@
 #!/bin/sh
 # relink-040-rth1.sh -- the kernel half of the RTH1 root hint (docs/contracts/RTH1-ROOT-HINT.md;
-# 2026-10-05, decision D-2): one kernel per family that roots on the disk the boot loader names.
+# 2026-10-05): one kernel per family that roots on the disk the boot loader names.
 #
 #   src/rth1.c            rth1_apply() reads the record at bootinfo+0x678 and sets rootdev and the
 #                         controller digit of swapfile.bo_name together, or leaves both as linked;

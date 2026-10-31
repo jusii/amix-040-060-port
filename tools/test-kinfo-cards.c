@@ -95,7 +95,7 @@ int main(int argc, char **argv)
 		expect(0, 3, 0, 1);			/* a4000t-710 */
 		expect(1, 2, 0, 1);			/* gayle */
 	} else {
-		/* the A4000T in 68030 mode with S5-15's second card: the Z3660 at its window, no board there */
+		/* the A4000T in 68030 mode with a second card: the Z3660 at its window, no board there */
 		configdev(0, 0x40000000, 0xc0de, 1);	/* an A4092 */
 		card(0, 0x10000000, z3660);
 		card(1, 0x40000000, other);

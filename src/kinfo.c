@@ -10,7 +10,7 @@
  *
  * The module kernel builds it with -DKINFO_DLM -DKINFO_KABI=\"k46.1.3\" (relink-040-kinfo.sh with
  * DLM=1): every read then refreshes the module list from the core's dlm_kinfo_list(), up
- * to KINFO_MAXMOD entries, with the length and the check to match (amix-dlm C2-1, stage-3 brief
+ * to KINFO_MAXMOD entries, with the length and the check to match (amix-dlm C2-1, stage-3 plan
  * step 8).  Without KINFO_DLM the object is the static kernel's, byte for byte.
  *
  * Linked by relink-040-kinfo.sh, which registers kinfoopen/close/read/write in cdevsw[53]

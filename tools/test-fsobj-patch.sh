@@ -1,6 +1,6 @@
 #!/bin/sh
 # test-fsobj-patch.sh -- tools/fsobj-patch.py on the stock ufs and s5 objects against a k46 base
-# (amix-dlm S5-04): the sites and bytes it finds, the module-only sites, the patched objects'
+# (the k46 half of amix-dlm's ufs and s5 modules): the sites and bytes it finds, the module-only sites, the patched objects'
 # hashes, and each refusal.
 #
 #     FSOBJ_BASE=<b-new> FSOBJ_FS=<stock usr/sys/fs> sh tools/test-fsobj-patch.sh

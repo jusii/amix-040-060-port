@@ -1,5 +1,5 @@
 | ide_sd_glue040.s -- register the Gayle IDE driver (amix-gayle-ide, ide.c) with sd on the driver
-| line, below the controllers the base already registers (2026-10-02, P-15 P2).
+| line, below the controllers the base already registers (2026-10-02).
 |
 | HOW sd FINDS A CONTROLLER.  sd.c's init() walks its controller table and, for each row, asks
 | autocon(id, n, &addr, &aux) for the n-th board with that autoconfig id; every answer goes to
@@ -14,7 +14,7 @@
 | every other id goes to autocon unchanged.  idepresent() runs its chipset gate before it touches
 | a task-file address, so this is safe on a machine without the port.
 |
-| THE ORDER RULE (owner decision pending; this is the "Z3660 stays card 0, IDE next" shape, and
+| THE ORDER RULE (the default is still open; this is the "Z3660 stays card 0, IDE next" shape, and
 | it is switchable).  The address this glue hands insert() is a SORT KEY, not a bus address:
 |   ide_sd_key = 0xfffffff0 (default)  IDE sorts after every real board, so the boards the base
 |                                      registers keep their card numbers and IDE takes the next

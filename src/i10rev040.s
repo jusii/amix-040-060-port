@@ -4579,7 +4579,7 @@ i10c_wbrep:
 | ===========================================================================
 | PART ELEVEN -- i10d: the CPU-INDEPENDENT brk/sbrk RING TRACER (2026-08-20).
 |
-| WHY.  User ruling: sh is the SAME binary on 030/040/060, so ISSUE-10's desync (sh's
+| WHY.  sh is the SAME binary on 030/040/060, so ISSUE-10's desync (sh's
 | blok arena top 0x800152A0 lands past its break 0x80014FB4) must be the 040 kernel
 | granting a DIFFERENT brk result than 030/060 for identical requests.  This records a
 | ring of the last 24 brk syscalls -- {requested newbrk, p_brkbase, p_brksize before,

@@ -50,7 +50,7 @@
 #                           (the pass log records which).  Default: the pin below; ZZ9000_REV=
 #                           (empty) takes the checkout's working tree instead
 #   ZZ9000_OPTS="..."       extra single-token driver options, e.g. -DZZ9K_Z3660_CON_1280x800
-#                           -DZZ9K_FB_NC (RT-05): register the framebuffer NC via hat_cm_fb_add
+#                           -DZZ9K_FB_NC: register the framebuffer NC via hat_cm_fb_add
 #   ZZ9000_BASE_SHA256=<hex> refuse any base but that one (the pinned f7vs is
 #                           d43a59ccb7df2ebcdf611a7fa322dd84a4c2166fa9d491078025ef4f9e0fa889)
 set -e
@@ -119,9 +119,9 @@ ln -s "$AMIX_SYSROOT/usr/sys/amiga/inc"     "$TREE/amiga/inc"
 ln -s "$AMIX_SYSROOT/usr/include/sys"       "$TREE/sys"
 [ -f "$TREE/amiga/console/screen.h" ] && [ -f "$TREE/amiga/inc/amiga.h" ] \
 	|| { echo "ERROR: the sysroot has no usr/sys/amiga/console or usr/sys/amiga/inc"; exit 1; }
-# Pinned (PO-13d, 2026-09-29): amix-z3660rtg dabe447 -- the card-blitter path (RT-07) with its fill
+# Pinned (2026-09-29): amix-z3660rtg dabe447 -- the card-blitter path with its fill
 # colour fix and the svga_switch reset at last close (729cbdc), plus a per-ioctl blitter register
-# cache (RT-09).  Imports unchanged; the knobs
+# cache.  Imports unchanged; the knobs
 # zz9k_blit_on / zz9k_blit_maxarea sit in .data for image patching.
 ZZ9000_REV="${ZZ9000_REV-dabe447}"
 if [ -n "$ZZ9000_REV" ]; then
@@ -160,13 +160,13 @@ CF=$(echo "$AMIX_KERNEL_CFLAGS" | sed 's/-m68020/-m68040/')
 	-I../../.. -I../../inc -c zz9000.c -o "$HERE/build/zz9000_040.o")
 m68k-linux-gnu-size "$HERE/build/zz9000_040.o" | sed 's/^/      /'
 run_step indent sh "$HERE/src/check_page_geometry.sh" "$HERE/build/zz9000_040.o"
-# T-9 (2026-09-28): -traditional makes the stock <sys/types.h> define `volatile` away, and gcc
+# 2026-09-28: -traditional makes the stock <sys/types.h> define `volatile` away, and gcc
 # then deletes every spl()/splx() whose output is unused and every MMIO `volatile`.  The toolchain
 # passes -Dvolatile=__volatile__ now; tools/spl-gate.py proves it for this object: G1 = the macro
 # dump keeps `volatile`, G2 = every function that calls spl writes %sr (per function).
 # The driver's own ZZ9K_SPLTTY/ZZ9K_SPLX expand to asm (or to nothing), so they are counted in the
 # raw source; the gate preprocesses from the driver's directory with the compile's own flags.
-echo "[*] T-9 gates G1/G2 (spl masks and MMIO volatile survived -traditional)"
+echo "[*] spl gates G1/G2 (spl masks and MMIO volatile survived -traditional)"
 run_step all python3 "$HERE/tools/spl-gate.py" --object "$HERE/build/zz9000_040.o" \
 	--source zz9000.c --cwd "$DRV" --cflags "$CF" --macro ZZ9K_SPLTTY --macro ZZ9K_SPLX \
 	-- -DZZ9K_TARGET_Z3660 -DZZ9K_NO_BUILTINFONT $ZZ9000_OPTS -I../../.. -I../../inc
@@ -194,7 +194,7 @@ fi
 [ "$SCANHITS" = 0 ] || { echo "[FAIL] scan060: ${SCANHITS:-an unrecognised report,} 060-unimplemented candidate(s) in zz9000_040.o"; exit 1; }
 
 echo "[*] the driver's kernel imports must be exactly the seven it is known to need"
-# ... plus hat_cm_fb_add when built with -DZZ9K_FB_NC (RT-05, amix-z3660rtg 26ff2d0): the
+# ... plus hat_cm_fb_add when built with -DZZ9K_FB_NC (amix-z3660rtg 26ff2d0): the
 # driver registers its framebuffer window in the base's hat_cm_fb table, so user mappings of it
 # take the NC cache class instead of NCS.  That table is this line's hat040.s; a base without it
 # is refused.

@@ -1,8 +1,8 @@
 #!/bin/sh
-# relink-040-carve.sh -- the k46 base without the static ufs and s5 (amix-dlm S5-11, contract C4-6).
+# relink-040-carve.sh -- the k46 base without the static ufs and s5 (amix-dlm contract C4-6).
 #
 # A module kernel loads ufs as a core-tier module (tools/fsobj-patch.py's object, wrapped by
-# amix-dlm tools/carve.py) and has no s5 (amix-dlm S5-37).  This pass makes their ranges of the
+# amix-dlm tools/carve.py) and has no s5.  This pass makes their ranges of the
 # base dead and zeroes them in place, so no address moves (src/carve_fs040.py):
 #   - vfssw loses the ufs and s5 rows (nfstype 12 -> 10), init_tbl loses inoinit;
 #   - the relocations inside the ranges go, their .text and .data bytes are zeroed;
@@ -13,7 +13,7 @@
 # byte and relocation for relocation.
 #
 # Order: on relink-040.sh's output, before every pass that puts a relocation-free branch across
-# the ranges (relink-040-sd4card.sh's bsr.l, the W-D7 probe inject's bra.l):
+# the ranges (relink-040-sd4card.sh's bsr.l, the support-probe inject's bra.l):
 #
 #     carve -> dd -> sd4card -> f4arms -> f6 -> rth1 -> kinfo -> dlm -> fpe
 #

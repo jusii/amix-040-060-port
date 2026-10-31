@@ -60,7 +60,7 @@ for h in immu param; do
 	echo "      sys/$h.h  = Model B   (stock kept as sys/${h}_stock.h)"
 done
 
-# This line's own headers, which the stock sysroot does not have.  sys/monsw.h (P-8) is the
+# This line's own headers, which the stock sysroot does not have.  sys/monsw.h is the
 # /dev/monsw interface: the monsw module, the card drivers and the X servers all include it.
 for h in monsw; do
 	[ ! -e "$OUT/usr/include/sys/$h.h" ] \

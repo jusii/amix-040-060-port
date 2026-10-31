@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """fsobj-patch.py -- the 4 KiB-page byte patches of a stock filesystem object, for a k46 module
-(amix-dlm S5-04, the k46 half; 2026-10-27).
+(the k46 half of amix-dlm's ufs and s5 modules; 2026-10-27).
 
   python3 tools/fsobj-patch.py --stock UNIX --base BASE OBJ --triples
   python3 tools/fsobj-patch.py --stock UNIX --base BASE OBJ -o OUT

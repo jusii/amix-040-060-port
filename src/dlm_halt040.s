@@ -1,5 +1,5 @@
 | dlm_halt040.s -- the module core's halt pass on the halt and reboot paths (amix-dlm core
-| patch 0030, S4-07; 2026-10-26).
+| patch 0030; 2026-10-26).
 |
 | uadmin's A_SHUTDOWN and A_REBOOT end in mdboot, which calls haltsys (halt) or rtnfirm (reboot).
 | Each module's _halt must run before either, newest first, so a board that can write memory is

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# ide_sd_rows.py -- the sd.c side of the Gayle IDE registration on the driver line (2026-10-02,
-# P-15 P2).  Run by relink-040-ide.sh on either side of its link; src/ide_sd_glue040.s explains
+# ide_sd_rows.py -- the sd.c side of the Gayle IDE registration on the driver line
+# (2026-10-02).  Run by relink-040-ide.sh on either side of its link; src/ide_sd_glue040.s explains
 # the mechanism and the order rule.
 #
 #   gen BASE OUT.s OUT.syms   the base's controller table, every existing row by relocation, then

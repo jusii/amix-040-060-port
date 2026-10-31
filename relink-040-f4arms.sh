@@ -54,7 +54,7 @@ echo "[*] base: $(basename "$IN")   arms: dbg=$DBG ufault=$UFAULT cache=${CACHE:
 # --cache and --dbg need a Z3660-carrying kernel: --cache has no reader without the driver,
 # and --dbg without it produces an artifact that cannot open this rig's root device --
 # which is the precondition attempt 1 was killed by (and --dbg can skip swap: it is not an
-# instrument).  --ufault alone takes any finished base (2026-10-02, P-15 K2,
+# instrument).  --ufault alone takes any finished base (2026-10-02,
 # docs/K2-ARMS-WITHOUT-Z3660.md): it imports only unt_latch, u and rootdir.
 if [ -n "$CACHE" ] || [ "$DBG" = 1 ]; then
 	m68k-linux-gnu-nm "$IN" | grep -qE " [TtDdBb] z3660queue\$" \

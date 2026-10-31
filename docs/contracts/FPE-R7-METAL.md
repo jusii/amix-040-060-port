@@ -13,7 +13,7 @@ PANIC: KERNEL FAULT psw=0x2204, pc=0x800D578, fmt=0x4, vector=0x2 (Bus Error)
 `0x0800D578` is `initialize+0x5c` in the a3091 (A3000/A2091 SCSI) driver, instruction
 `movew #3,%a0@(2)` — a word write to `0x00DD0002`, reached from the root-device probe
 `ini_main → vfs_mountroot → s5mountroot → sdopen → getrdb → read → ddstrategy → startio →
-initialize`. The metal record is `Amix/tmp/2026-08-27-fpe-metal/RESULTS.md`.
+initialize`.
 
 This document is committed **before** the round-7 artifact is built. It answers what the
 NO-GO was, refutes the two mechanisms that were leading candidates going in, names the one
@@ -74,7 +74,7 @@ omits. That is fixed here.
 ## 1. (a) Which build lineage the metal known-good actually is
 
 `build/unix-060-f8a1-CARD1-ced0s1`, 1,889,316 B, build id `68060-260825-70`, read back off the
-card and hashed at `Amix/tmp/2026-08-26-blizzard-f4m2-att9-hwswap/kernels/readback-f8a1.bin`.
+card and hashed.
 
 Its chain, each link proved below by `.text`-prefix identity rather than by build record:
 
@@ -122,9 +122,8 @@ unix-040-f8a1-CARD1-ced0s1  ->  unix-060-f8a1-CARD1-ced0s1     1 byte
 controller)", and its `node(6,1,1) == "/dev/dsk/ced0s1"` self-check is annotated "measured,
 reads the root disk".
 
-**The FPE artifact, on the same axes.** `Amix/tmp/2026-08-27-fpe-r5/kernels/unix-060-fpe`
-(`8f7c8d62…`, the exact bytes read back off the card at
-`Amix/tmp/2026-08-27-fpe-metal/verify/rb-kernel.bin`):
+**The FPE artifact, on the same axes.** Round 5's `unix-060-fpe`
+(`8f7c8d62…`, the exact bytes read back off the card):
 
 | | FPE metal artifact | metal known-good |
 |---|---|---|
@@ -141,8 +140,8 @@ even a card-1 restamp would not have saved it, because there is no Z3660 row to 
 
 ## 2. (b) Has `b1351544` ever run on metal at 128 MiB?
 
-**No, and it could not have.** Round 3 (`Amix/tmp/2026-08-26-fpe-r3/`) and round 5
-(`Amix/tmp/2026-08-27-fpe-r5/`) are both Amiberry beds; round 5's own artifact record is
+**No, and it could not have.** Round 3 and round 5
+are both Amiberry beds; round 5's own artifact record is
 "status-facts for the R5 artifact at load base `0x07000000`", against the metal session's
 `facts/status-facts-unix-060-fpe-0x08000000.md`. Round 6 was the first time any kernel from
 this base met the A4000 + Z3660, and it panicked in the root probe on both scored boots.
@@ -376,8 +375,7 @@ message can name the wrong file — as it did in §8. The gate itself is unchang
 ## 8. The base for the round-7 artifact, and the assertion that could not be satisfied
 
 The designed-for answer — run the FPE second pass over the metal known-good — was attempted
-first, over `build/unix-060-f8a1-CARD1-ced0s1` itself. Log:
-`Amix/tmp/2026-08-27-fpe-r7-kernels/logs/00-attempt-over-f8a1.log`.
+first, over `build/unix-060-f8a1-CARD1-ced0s1` itself.
 
 Everything about the glue passed. In particular the §8.4 override discipline is demonstrably
 intact against the metal base — every `*_fpe_orig` alias resolved to the base's own arm, and
@@ -467,7 +465,6 @@ session on it.
 
 ## 10. Pre-registered expectations for the metal retry
 
-Deployment note and artifacts: `Amix/tmp/2026-08-27-fpe-r7-kernels/`.
 
 **Stage** `unix-060-fpe-metal-CARD1-ced0s1` into the boot slice, root image unchanged, and boot
 `unix_boot040`. The control kernel `unix-060-f7vs-CARD1-ced0s1` is provided for a same-session
@@ -498,8 +495,7 @@ the family was necessary but not sufficient and the new stop is a fresh finding.
 ## 11. Artifacts
 
 Built after §1–§10 were committed; the expectations in §10 were registered first. Logs, counter
-addresses and a `SHA256SUMS` over all of it: `Amix/tmp/2026-08-27-fpe-r7-kernels/`, with the
-deployment note in its `DEPLOY.md`.
+addresses and a `SHA256SUMS` over all of it were kept with the build, with a deployment note.
 
 | artifact | size | sha256 |
 |---|---|---|

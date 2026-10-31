@@ -1,6 +1,6 @@
 #!/bin/sh
 # relink-040-cdfs.sh -- link amix-cdfs's read-only CD filesystem into a kernel of this line, in
-# RFS's vfssw row (2026-10-02, PO-02; decisions D43/D44).
+# RFS's vfssw row (2026-10-02).
 #
 # What goes in:
 #   libcdfskern.o      amix-cdfs's relocatable kernel object, taken as delivered and pinned by md5
@@ -14,7 +14,7 @@
 #   cdfs_glue040.o     the row's name "cdfs", and cdfs_rfsys, the guard that keeps RFS's system
 #                      call from walking tables that are no longer allocated (src/cdfs_glue040.s).
 # and three edits after the link (src/patch_cdfs_vfssw.py): vfssw[4]'s name and init, and
-# sysent[78].  That script asserts the PO-02 proof first -- nothing reaches vfssw row 4 except the
+# sysent[78].  That script asserts the vfssw-row proof first -- nothing reaches vfssw row 4 except the
 # table walks -- and KNOWN-ISSUES DRIVER-LINE-3 records it.
 #
 # PAGE GEOMETRY.  The object is compiled against the stock headers (NBPP 2048), and the page gate
@@ -41,7 +41,7 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 IN="${1:-$HERE/build/unix-040}"
 OUT="${2:-$HERE/build/unix-040-cdfs}"
 OBJSRC="${CDFS_OBJ:-$HERE/../amix-cdfs/build/cd06-new/libcdfskern.o}"
-# Pinned (PO-02, 2026-10-02): amix-cdfs b383d14 (CD-06, "Avoid 32x32->64 multiplies in the AMIX
+# Pinned (2026-10-02): amix-cdfs b383d14 ("Avoid 32x32->64 multiplies in the AMIX
 # kernel object"): scan060 0 candidates, imports unchanged from the 030 object.
 CDFS_MD5="${CDFS_MD5-839553311ffa92b0b0b607988581a184}"
 [ -f "$IN" ] || { echo "ERROR: base kernel missing: $IN"; exit 1; }

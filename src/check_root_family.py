@@ -38,7 +38,7 @@
 #   3. every row the loop will scan resolves to a DEFINED controller-queue function.
 #   4. rootdev's card < SDCARDS (4 when the image carries sd4_insert).
 #   5. the root is a SCSI disk (sd, block major 18) or the contract's floppy root (amix-kerntools
-#      contracts/bootchain-v1.json rootdev.floppy, KT-34): rootdev FD0P 0x00400008 (major 16)
+#      contracts/bootchain-v1.json rootdev.floppy): rootdev FD0P 0x00400008 (major 16)
 #      with bo_name "/dev/fakeswap", the miniroot's dummydisk.  A floppy root has no card, so
 #      checks 1 and 4 do not apply to it and --require-card refuses it.  Any other major, or
 #      any other floppy minor or swap name, is refused.

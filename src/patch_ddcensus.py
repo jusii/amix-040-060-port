@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # patch_ddcensus.py -- DIAGNOSTIC ONLY: route dd startio's one vtop call through dd_vtop_census
-# (src/ddcensus040.s) by retargeting its relocation (2026-10-03, P-15 DI-1 follow-up).
+# (src/ddcensus040.s) by retargeting its relocation (2026-10-03, after the misplaced-write analysis).
 #
 #   .rela.text @0xc10a   vtop  ->  dd_vtop_census
 #

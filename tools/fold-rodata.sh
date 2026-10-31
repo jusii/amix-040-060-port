@@ -3,7 +3,7 @@
 # uses the same fold).
 #
 # Why: the kernel image has .text and .data and nothing between them, so a .rodata in a linked
-# object makes the link's text/data non-contiguous.  T-9's -Dconst=__const__ is how one appears in
+# object makes the link's text/data non-contiguous.  The kernel flags' -Dconst=__const__ is how one appears in
 # objects compiled here (fpu_cordic.c's two const tables); a delivered object can carry one too.
 #
 # Section index, not name: objcopy keeps the index, so the same section is dumped before and after
