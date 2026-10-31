@@ -279,11 +279,13 @@ done
 # leaves the stock body strong and links cleanly (BUILDING.md:252-255), which is the failure
 # mode this port has paid for.  So ask: is there exactly ONE definition of each, and is it
 # ours?  Ours are the ones at a higher address than the base's text end.
-BASETEXT=$(m68k-linux-gnu-readelf -SW "$STAGE" | awk '{gsub(/[][]/,"")} $2==".text"{print strtonum("0x"$6)}')
+# Hex -> decimal by the shell: strtonum() is gawk's, and mawk (make dist's container) refuses it.
+BASETEXT=$((0x$(m68k-linux-gnu-readelf -SW "$STAGE" | awk '{gsub(/[][]/,"")} $2==".text"{print $6}')))
 for s in prhasfp fpuinit fpu_save fpu_restore fpu_setup fpu_setup_gated setregs; do
-	A=$(m68k-linux-gnu-nm "$OUT" | awk -v s="$s" '$3==s && $2=="T"{print strtonum("0x"$1)}')
+	A=$(m68k-linux-gnu-nm "$OUT" | awk -v s="$s" '$3==s && $2=="T"{print $1}')
 	C=$(echo "$A" | wc -w)
 	[ "$C" = 1 ] || { echo "[FAIL] $s has $C strong definitions"; exit 1; }
+	A=$((0x$A))
 	[ "$A" -ge "$BASETEXT" ] || {
 		echo "[FAIL] $s still resolves into the base image at $A (< base .text end $BASETEXT)"
 		echo "       -- the weaken/override did not take."
