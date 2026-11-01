@@ -11079,3 +11079,29 @@ byte for byte. Counters `swg_calls`, `swg_nomem`, `swg_resized`, `swg_last` behi
   1904512` at once, S90swap stepped down and added 524288 blocks (256 MiB), and the boot came up, at
   64 MB and at 16 MB. (amix-base 1.0-17, which reads no swap_add, tried only the whole slice; it too was
   refused and the boot came up.)
+
+## ✅ ISSUE-113 (2026-11-01, a defect of this port: MEASURED in emulation on cut `68060-261101-56`; FIXED by `5a0d8cd`, verified in emulation on the test build `68060-261101-97`; NOT YET ON HARDWARE): every idle clock tick is booked as system time to the last process that ran, so fsflush shows about half the CPU and sysinfo's idle stays 0
+
+> **Ledger: FIXED (emulation).** `src/runtime040.s`'s idle override defines `waitloc` after its
+> `stop`; relink-040.sh weakens the stock one and checks that the strong `waitloc` is the strong
+> `idle` + 4. The dbg twin (`src/mainmarks.s`) does the same. Accounting only: no CPU was ever spent.
+
+**Defect.** `clock()` (`.text 0x3dc4e`) and `clock_int()` (`0x1a016`) count a tick as idle only when the
+interrupted PC equals `waitloc`, the stock label right after the stock idle's `stop #0x2000` (`.text
+0x19c`/`0x1a0`). runtime040.s replaces `idle` with its own `stop; rts` (`--weaken-symbol idle`) and left
+`waitloc` at `0x1a0`, so the comparison never matched: an idle tick took the system-time branch, added to
+sysinfo's kernel counter and to `p_stime` of `curproc`, the process that ran last. That is usually
+fsflush, which wakes every second. The 68030 line uses the stock idle and is not affected.
+
+**Measured on -56 (emulation, A4000 LC060/Z3660, 64 MB, the box idle after boot):**
+- fsflush +2:32, +2:29, +2:27, +2:25 in four 5-minute windows with `dopageflush`/`doiflush` at 1/1,
+  0/1, 1/0 and 0/0 (written live with `adb -w`): the flush flags do not change it.
+- The load average stays 0.00 throughout, and fsflush stays in state S.
+- `sysinfo` cpu[] (idle, user, kernel, wait) over 10 minutes: idle 0 → 0, kernel 4475 → 40510:
+  every tick at 60 Hz went to kernel.
+- The conditional flush in hat_pagesync (`d0d7c02`, reverted by `2e3b9d5`) changed nothing either.
+
+**Verified on -97 (`5a0d8cd`: -56 plus the fix; the same row, side by side):** fsflush 0:00 → 0:00 over
+10 idle minutes; sysinfo idle 4260 → 22265 → 40271 (+18 005 per 5 minutes), kernel 239 → 275. The
+build's `[OK] waitloc @0x000daccc follows the strong idle's stop (idle @0x000dacc8)`; .text, .data and
+the abi are -56's (unix 2424876 bytes either way).
