@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """kabi-sidecar.py -- write the kabi sidecar of a finished kernel (docs/contracts/KINFO.md, "The sidecar").
 
-  python3 tools/kabi-sidecar.py KERNEL --family NAME [--pin PIN] [--abi HEX] [-o OUT]
-  python3 tools/kabi-sidecar.py KERNEL --family NAME [--pin PIN] [--abi HEX] --stand DIR
+  python3 tools/kabi-sidecar.py KERNEL --family NAME [--pin PIN] [--abi HEX] [--kbootset-min FILE] [-o OUT]
+  python3 tools/kabi-sidecar.py KERNEL --family NAME [--pin PIN] [--abi HEX] [--kbootset-min FILE] --stand DIR
   python3 tools/kabi-sidecar.py --check KERNEL SIDECAR
   python3 tools/kabi-sidecar.py --root KERNEL        the root= list alone (any stage of the chain)
 
@@ -39,9 +39,15 @@ only what is linked in (C3-3 version 6): a module kernel cut without ufs and s5
 dlm_static_root (core patch 0037) carries the same root list, written by relink-040-dlm.sh from
 --root; the tool refuses a kernel where the two differ.
 
-Last, on any kernel, rth1=2 (C2-3 version 9) when the image's RTH1 half matches a motherboard
+Then, on any kernel, rth1=2 (C2-3 version 9) when the image's RTH1 half matches a motherboard
 controller's record by its motherboard id (amix-dlm C4-1 section 5.2): src/rth1.c from 2026-10-27 on,
 whose rth1_moboid is in the image's .text beside rth1_apply.  Absent: the old record forms only.
+
+Last, kbootset-min=<version> (C2-3 version 10) with --kbootset-min FILE: the oldest kbootset package
+version that can compose a generation with this kernel, copied verbatim from FILE, the module core's
+amix kernel/dlm/core/kbootset-min at the dlm commit the cut builds with.  FILE must be one line of the
+form N.N.N.YYMMDD-N (the form kernel/dlm/tests/host/kbmin.sh checks).  Without it the sidecar has no
+kbootset-min= line: a sidecar recorded before version 10 keeps its bytes, and its floor is a conf line.
 
 -o OUT writes the sidecar there (default: KERNEL's directory/kabi when KERNEL is named unix, else
 KERNEL.kabi).  --stand DIR lays out the package's files instead: DIR/stand/k46/unix (a copy of
@@ -157,7 +163,21 @@ def root_list(e):
     return keys
 
 
-def sidecar(kernel, family, pin, abi=None):
+def read_kbmin(path):
+    """core/kbootset-min: exactly one line, a kbootset package version."""
+    try:
+        text = open(path).read()
+    except OSError as x:
+        die("--kbootset-min %s: %s" % (path, x.strerror))
+    lines = text.split("\n")
+    if len(lines) != 2 or lines[1] != "":
+        die("--kbootset-min %s is not one line" % path)
+    if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+\.[0-9]{6}-[0-9]+", lines[0]):
+        die("--kbootset-min %s: %r is not a kbootset package version (N.N.N.YYMMDD-N)" % (path, lines[0]))
+    return lines[0]
+
+
+def sidecar(kernel, family, pin, abi=None, kbmin=None):
     e = rows.Elf(kernel)
     e.path = kernel
     syms = symbols(e)
@@ -206,7 +226,7 @@ def sidecar(kernel, family, pin, abi=None):
                                   for n in ("rth1_apply", "rth1_moboid")) else []
     lines = head + [("loader-min", str(LOADER_MIN if axk is None else LOADER_MIN_DLM))] + (axk or []) + sd4 + [
         ("root", ",".join(keys)),
-    ] + ([("rootfs", ",".join(fs))] if fs else []) + rth1
+    ] + ([("rootfs", ",".join(fs))] if fs else []) + rth1 + ([("kbootset-min", kbmin)] if kbmin else [])
     return "".join("%s=%s\n" % kv for kv in lines)
 
 
@@ -222,10 +242,10 @@ def main():
             die("usage: --check KERNEL SIDECAR")
         have = open(a[2]).read()
         fam = dict(l.split("=", 1) for l in have.splitlines() if "=" in l)
-        want = sidecar(a[1], fam.get("family", ""), fam.get("pin", ""), fam.get("abi"))
+        want = sidecar(a[1], fam.get("family", ""), fam.get("pin", ""), fam.get("abi"), fam.get("kbootset-min"))
         print("[ok] %s matches %s" % (a[2], a[1]) if have == want else "[FAIL] %s is not the sidecar of %s" % (a[2], a[1]))
         sys.exit(0 if have == want else 1)
-    kernel, family, pin, abi, out, stand = None, None, None, None, None, None
+    kernel, family, pin, abi, out, stand, kbmin = None, None, None, None, None, None, None
     while a:
         x = a.pop(0)
         if x == "--family":
@@ -234,6 +254,8 @@ def main():
             pin = a.pop(0)
         elif x == "--abi":
             abi = a.pop(0)
+        elif x == "--kbootset-min":
+            kbmin = read_kbmin(a.pop(0))
         elif x == "-o":
             out = a.pop(0)
         elif x == "--stand":
@@ -244,7 +266,7 @@ def main():
             die("unknown argument %s" % x)
     if not kernel or not family:
         raise SystemExit(__doc__)
-    text = sidecar(kernel, family, pin or default_pin(), abi)
+    text = sidecar(kernel, family, pin or default_pin(), abi, kbmin)
     if stand:
         d = os.path.join(stand, "stand", "k46")
         os.makedirs(d, exist_ok=True)
