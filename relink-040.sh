@@ -316,6 +316,26 @@ m68k-cbm-sysv4-gcc -m68040 -c "$HERE/src/ptdatfree040.s" -o "$HERE/build/ptdatfr
 # read.  This override is the stock loop plus two null checks and a counter block.
 # CPU-independent: it is a defect in generic vfs code, not in anything 040.
 m68k-cbm-sysv4-gcc -m68040 -c "$HERE/src/syncguard.s" -o "$HERE/build/syncguard.o"
+# swapguard (2026-11-01, ISSUE-111): swapadd allocates its anon array (16 bytes per 4 KiB page of the area) with
+# KM_SLEEP; over 4 KiB that is a run of kvseg, and when none is large enough `swap -a` sleeps on Km_OsizeWanted
+# for ever.  swapadd_guarded allocates the array with KM_NOSLEEP first (ENOMEM when it does not fit) and
+# swapguard_take hands it to swapadd; the callers, the anon call and swg_swapadd's initializer are retargeted
+# after the link (tools/swapguard-retarget.py, below).  The 68030 kernel has the same fix at a 2 KiB page.
+# SWAP_GUARD=0 omits the unit and the retarget -- the base without it, byte for byte.
+SWAP_GUARD="${SWAP_GUARD:-1}"
+SWG_OBJ=""
+if [ "$SWAP_GUARD" = "1" ]; then
+	m68k-cbm-sysv4-gcc $(echo "$AMIX_KERNEL_CFLAGS" | sed 's/-m68020/-m68040/') \
+		-c "$HERE/src/swapguard.c" -o "$HERE/build/swapguard.o"
+	SWG_IN=$(m68k-linux-gnu-nm "$HERE/build/swapguard.o" | awk '$1=="U"{print $2}' | LC_ALL=C sort | tr '\n' ' ')
+	SWG_EX=$(m68k-linux-gnu-nm "$HERE/build/swapguard.o" | awk '$2 ~ /^[TDB]$/{print $3}' | LC_ALL=C sort | tr '\n' ' ')
+	[ "$SWG_IN" = "kmem_free kmem_zalloc sleep wakeup " ] || { echo "[FAIL] swapguard.o imports '$SWG_IN'"; exit 1; }
+	[ "$SWG_EX" = "swapadd_guarded swapguard_swapadd swapguard_take swg_calls swg_last swg_magic swg_nomem swg_resized swg_swapadd " ] \
+		|| { echo "[FAIL] swapguard.o exports '$SWG_EX'"; exit 1; }
+	SWG_OBJ="$HERE/build/swapguard.o"
+else
+	echo "[*] SWAP_GUARD=0 -- building WITHOUT the swapadd guard (rollback control)"
+fi
 # pageinitzero (2026-08-20, ISSUE-102): the page-frame database is sptalloc'd with a
 # non-zero base, which is segkmem_mapin -- it MAPS existing DRAM and clears nothing --
 # and page_init only ORs p_lock into each struct.  Every other field arrives as
@@ -573,7 +593,7 @@ m68k-cbm-sysv4-ld -r -o "$OUT" "$HERE/build/unix-stage1" \
 	"$HERE/build/config040.o" "$HERE/build/cb_icode040.o" "$HERE/build/kdbg040.o" \
 	"$HERE/build/dbgpublish040.o" "$HERE/build/codepub040.o" "$HERE/build/issue39_040.o" \
 	$LSDT_OBJ "$HERE/build/ptdatfree040.o" \
-	"$HERE/build/syncguard.o" "$HERE/build/pageinitzero.o" "$HERE/build/segmapdbg.o" \
+	"$HERE/build/syncguard.o" "$HERE/build/pageinitzero.o" "$HERE/build/segmapdbg.o" $SWG_OBJ \
 	"$HERE/build/btwalk.o" "$HERE/build/usptrap.o" "$HERE/build/srgtrap.o" "$HERE/build/inittrap.o" "$HERE/build/inituser.o" \
 	"$HERE/build/hgfault040.o" \
 	"$HERE/build/i10rev040.o"
@@ -1300,6 +1320,21 @@ if [ "$HATMAP_NOSDT" = "1" ]; then
 		|| { echo "[FAIL] hat_legacy_sdt_free is not hatmap_nosdt040's stub"; exit 1; }
 	m68k-linux-gnu-nm "$OUT" | grep -qE " i40_magic\$" && { echo "[FAIL] legacysdt040.o is linked beside the stub"; exit 1; }
 	echo "[OK] ISSUE-110 bound: hat_growsdt_user from $HNSCALLERS; legacy teardown retired"
+fi
+
+# HARD CHECK (2026-11-01, ISSUE-111): swapadd's callers name swapadd_guarded, its anon-array kmem_zalloc names
+# swapguard_take, and swapadd is named only from swg_swapadd.  A lost retarget links and boots and leaves
+# `swap -a` able to sleep for ever.  relink-040-f6.sh --swa later moves swapconf's call to its latch, which
+# calls the guard (src/patch_swapadd.py), and checks the result again.
+if [ "$SWAP_GUARD" = "1" ]; then
+	echo
+	echo "[*] swap guard: swapadd's callers -> swapadd_guarded, its anon kmem_zalloc -> swapguard_take"
+	run_step 2 python3 "$HERE/tools/swapguard-retarget.py" "$OUT"
+	run_step 2 python3 "$HERE/tools/swapguard-retarget.py" --check "$OUT"
+	SWGCALLERS=$(m68k-linux-gnu-objdump -dr "$OUT" | awk '/^[0-9a-f]+ <[^>]+>:$/{fn=$2} /R_68K_32[ \t]+swapadd_guarded$/{gsub(/[<>:]/,"",fn); print fn}' | sort | tr '\n' ' ')
+	[ "$SWGCALLERS" = "swapconf swapctl swapfunc " ] \
+		|| { echo "[FAIL] swapadd_guarded callers are '$SWGCALLERS', expected swapconf swapctl swapfunc"; exit 1; }
+	echo "[OK] ISSUE-111 swap guard bound: swapadd_guarded from $SWGCALLERS"
 fi
 
 echo
