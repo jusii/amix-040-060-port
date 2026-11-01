@@ -582,6 +582,7 @@ m68k-linux-gnu-objcopy \
 	--weaken-symbol bp_mapout \
 	--weaken-symbol sched \
 	--weaken-symbol idle \
+	--weaken-symbol waitloc \
 	--weaken-symbol resume \
 	--weaken-symbol hardbus \
 	--add-symbol hardbus_orig=.text:0x5b3c2,function,global \
@@ -991,6 +992,17 @@ if [ "$COADDR" = "00000576" ] || [ -z "$COADDR" ]; then
 	echo "[FAIL] strong copyout is stock/missing (addr='$COADDR') -> icode never published to RAM (ISSUE-38)"; exit 1
 fi
 echo "[OK] cb_icode040 copyout wrapper @0x$COADDR is the strong def (stock body kept as copyout_orig)."
+
+# HARD CHECK (2026-11-01, ISSUE-113): clock() and clock_int() take a tick as idle only when
+# the interrupted PC equals `waitloc`.  The strong waitloc must be the address right after
+# the strong idle's stop (idle+4), not the stock 0x1a0 behind the weakened stock idle --
+# otherwise every idle tick is booked as system time to the last process that ran.
+IDADDR=$(m68k-linux-gnu-nm "$OUT" | awk '$3=="idle" && $2=="T" {print $1}')
+WLADDR=$(m68k-linux-gnu-nm "$OUT" | awk '$3=="waitloc" && $2=="T" {print $1}')
+if [ -z "$IDADDR" ] || [ -z "$WLADDR" ] || [ $((0x$WLADDR)) -ne $((0x$IDADDR + 4)) ]; then
+	echo "[FAIL] waitloc (0x$WLADDR) is not idle+4 (idle 0x$IDADDR) -> idle time booked to the last process (ISSUE-113)"; exit 1
+fi
+echo "[OK] waitloc @0x$WLADDR follows the strong idle's stop (idle @0x$IDADDR)."
 
 # HARD CHECK (2026-08-12, ISSUE-43): the FP context path.  Two ways this unit can be present
 # in the tree and absent from the kernel, both of which have happened to other units here:
