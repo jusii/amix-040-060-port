@@ -278,7 +278,26 @@ m68k-cbm-sysv4-gcc -m68040 -c "$HERE/src/i10rev040.s" -o "$HERE/build/i10rev040.
 # Calls the RETAINED hat_growsdt body -- hence the globalize below, and hence
 # this must never be weakened.  Contract: analyysirepo
 # vm-map/ISSUE40-LEGACY-SDT-TEARDOWN-CONTRACT.md.
-m68k-cbm-sysv4-gcc -m68040 -c "$HERE/src/legacysdt040.s" -o "$HERE/build/legacysdt040.o"
+# hatmap_nosdt040 (2026-11-01, ISSUE-110) supersedes it by default: hat_map's legacy growth is retargeted
+# to hat_growsdt_user (tools/hatmap-nosdt-retarget.py, after the link), which writes no 030 section
+# descriptor into a user root -- their first longs land in the native root entries A0/A2/A4/A6 and read as
+# pointer descriptors into chip RAM.  With no user legacy object, hat_free's legacy teardown is retired too
+# (hatmap_nosdt040.s keeps the symbol and counts).  HATMAP_NOSDT=0 links legacysdt040.o instead and skips
+# the retarget: the base without the fix, byte for byte.
+HATMAP_NOSDT="${HATMAP_NOSDT:-1}"
+if [ "$HATMAP_NOSDT" = "1" ]; then
+	m68k-cbm-sysv4-gcc -m68040 -c "$HERE/src/hatmap_nosdt040.s" -o "$HERE/build/hatmap_nosdt040.o"
+	HNS_IN=$(m68k-linux-gnu-nm "$HERE/build/hatmap_nosdt040.o" | awk '$1=="U"{print $2}' | LC_ALL=C sort | tr '\n' ' ')
+	HNS_EX=$(m68k-linux-gnu-nm "$HERE/build/hatmap_nosdt040.o" | awk '$2 ~ /^[TDB]$/{print $3}' | LC_ALL=C sort | tr '\n' ' ')
+	[ "$HNS_IN" = "hat_growsdt kas " ] || { echo "[FAIL] hatmap_nosdt040.o imports '$HNS_IN'"; exit 1; }
+	[ "$HNS_EX" = "hat_growsdt_user hat_legacy_sdt_free hns_free_n hns_kas_n hns_magic hns_user_n " ] \
+		|| { echo "[FAIL] hatmap_nosdt040.o exports '$HNS_EX'"; exit 1; }
+	LSDT_OBJ="$HERE/build/hatmap_nosdt040.o"
+else
+	echo "[*] HATMAP_NOSDT=0 -- building WITH the legacy user segment tables (rollback control)"
+	m68k-cbm-sysv4-gcc -m68040 -c "$HERE/src/legacysdt040.s" -o "$HERE/build/legacysdt040.o"
+	LSDT_OBJ="$HERE/build/legacysdt040.o"
+fi
 # ptdatfree040 (2026-08-02, ISSUE-40 part 2): the half that actually returns the
 # page.  Part 1 released the legacy SDT and got ZERO pages back on hardware
 # (i40_pgfreed_n = 0 over 3440 releases) because hat_sdtfree only credits when
@@ -553,7 +572,7 @@ m68k-cbm-sysv4-ld -r -o "$OUT" "$HERE/build/unix-stage1" \
 	"$HERE/build/segkmem040.o" "$HERE/build/dma_cache040.o" "$HERE/build/a3091dbg040.o" "$HERE/build/a3091demux040.o" "$HERE/build/segdevchk040.o" "$HERE/build/scrdevfix040.o" "$HERE/build/cb_release040.o" "$HERE/build/btrace.o" \
 	"$HERE/build/config040.o" "$HERE/build/cb_icode040.o" "$HERE/build/kdbg040.o" \
 	"$HERE/build/dbgpublish040.o" "$HERE/build/codepub040.o" "$HERE/build/issue39_040.o" \
-	"$HERE/build/legacysdt040.o" "$HERE/build/ptdatfree040.o" \
+	$LSDT_OBJ "$HERE/build/ptdatfree040.o" \
 	"$HERE/build/syncguard.o" "$HERE/build/pageinitzero.o" "$HERE/build/segmapdbg.o" \
 	"$HERE/build/btwalk.o" "$HERE/build/usptrap.o" "$HERE/build/srgtrap.o" "$HERE/build/inittrap.o" "$HERE/build/inituser.o" \
 	"$HERE/build/hgfault040.o" \
@@ -562,7 +581,7 @@ m68k-cbm-sysv4-ld -r -o "$OUT" "$HERE/build/unix-stage1" \
 echo
 echo "[*] overridden symbols (each must be a single strong def):"
 for s in pstart sysseginit vatosde vatopte uvatosde hat_pteload hat_unlock hat_unload hat_pageunload hat_pagesync hat_exec hat_alloc hat_free hat_ptfree hat_chgprot hat_dup get_fault userspace vtop usrxmemflt usrxmemflt_orig usrxmemflt_stock hg_magic hg_on hg_seen_n hg_cand_n hg_win_n hg_cover_n hg_lim_n hg_grow_n hg_landed_n hg_mapfail_n hg_unres_n hg_far_n segvn_faultpage segvn_faultpage_orig segvn_prot_magic segvn_prot_pp_n segvn_prot_n x60_far_addr x60_siginfo_n krnxmemflt krnxmemflt_orig krnxmemflt_stock vtop_orig ptest prumap prfastmapin uvatopte040 haltsys rtnfirm segu_get segu_get_lockfix segu_get_orig swapinub swapinub_stock lmul cputype bp_map bp_mapout sched idle resume hardbus hardbus_orig flushmmu segkmem_setprot sptfree hat_cm_ram dma_a3091_stopdma dma_a3091_startdma dma_a3091_startdma_reconn a3091_stopdma_orig a3091_startdma_orig a3091_dma_on a3091_badhardware_dbg a3091_badhardware_orig a3091_istate a3091_curunitp a3091_starthead segdev_setprot_chk segdev_unmap_chk segdev_setprot_orig segdev_unmap_orig sdc_magic sdc_setprot_n sdc_setprot_bad sdc_unmap_n sdc_unmap_bad scr_allocbmap scr_freebmap scrfix_magic scrfix_ran scrfix_alloc_n scrfix_free_n scrfix_planes_alloc scrfix_planes_free scrfix_bytes_alloc scrfix_bytes_free scrfix_misalign_n scrfix_allocfail_n scrfix_badtype_n scrfix_last_raw scrfix_last_size scrfix_last_ptr scrfix_bad_ptr a3091_uqueue a3091_startany a3p_magic a3p_ran a3p_seen a3p_n49 a3p_n41 a3p_verdict a3p_d_try a3p_d_failed a3p_d_busfree a3p_d_quar a3p_d_notowner a3p_d_bytes a3p_d_sent a3p_d_exp_poll a3p_d_exp_bytes a3p_d_exp_dbr a3p_d_exp_ss a3p_d_exp_phase a3p_p_try a3p_p_got a3p_p_as2 a3p_p_bsyw a3p_p_tc a3p_p_sac a3p_p_sac0 a3p_atn_try a3p_atn_stage a3p_atn_mout a3p_atn_sent a3p_atn_free a3p_atn_lci a3p_rel_try a3p_rel_ok a3p_rel_raced a3p_rel_fail a3p_rel_exp a3p_rel_maxpoll a3d_magic a3d_ran a3d_n a3d_devp a3d_istr a3d_ss a3d_istate a3d_unit a3d_head a3d_segstate a3d_owned a3d_noprep a3091intr_demux a3w_magic a3w_ran a3w_consume a3w_calls a3w_nodev a3w_notours a3w_own a3w_ints_only a3w_ints_eint a3w_eint_only a3w_other a3w_eint_acked a3w_eint_deleg a3w_resid_eint a3w_eint_then_ints a3w_last_istr a3w_or_istr a3w_other_istr a3w_dead_n a3w_dead_istr dma_cmpl_count dma_seg_state cb_page_release cb_pgfree_enter cb_vpfree_enter cb_rel_count btrace_mark btrace_on config_cachefix config_orig copyout copyout_orig cb_icode_calls cb_icode_push kdbg_on hat_pfnmiss_n hat_badaslot_n hat_sdtfail_n dbg_publish_on dbg_ptrace_publish dbg_procfs_publish mprotect mprotect_orig codepub_on codepub_calls codepub_exec codepub_push hat_sdtfail_count i39_magic i39_freemem_p i39_availrmem_p i39_fail_n i39_fail_freemem \
-         hat_growsdt hat_legacy_sdt_free i40_magic i40_on i40_calls i40_sec2_n i40_sec3_n i40_empty_n i40_bad_n i40_err_n i40_pgfreed_n i40_held_n i40_last_n i40_last_base i40_last_bits \
+         hat_growsdt hat_legacy_sdt_free hat_growsdt_user hns_magic hns_user_n hns_kas_n hns_free_n i40_magic i40_on i40_calls i40_sec2_n i40_sec3_n i40_empty_n i40_bad_n i40_err_n i40_pgfreed_n i40_held_n i40_last_n i40_last_base i40_last_bits \
          i10_magic i10_rpfail_n i10_hlfail_n i10_hffail_n i10_dupreg_n i10_deep_n \
          i10p_probe i10p_magic i10p_gmask i10p_gwant i10p_vmask i10p_n i10p_done i10p_have \
          i10p_fa i10p_lastfa i10p_want i10p_maxtry i10p_tries i10p_busy i10p_why \
@@ -1265,6 +1284,22 @@ if [ "$FPUINIT060" = "1" ]; then
 	run_step indent python3 "$HERE/src/check_fpu_relocs.py" "$OUT" --gated
 else
 	run_step indent python3 "$HERE/src/check_fpu_relocs.py" "$OUT"
+fi
+
+# HARD CHECK (2026-11-01, ISSUE-110): hat_map's one relocation naming hat_growsdt, found by symbol, now
+# names hat_growsdt_user, and nothing else does; hat_legacy_sdt_free is the counting stub, not the ISSUE-40
+# teardown.  A lost retarget links and boots and puts the 030 section descriptors back into A0/A2/A4/A6.
+if [ "$HATMAP_NOSDT" = "1" ]; then
+	echo
+	echo "[*] hat_map legacy growth -> hat_growsdt_user"
+	run_step 2 python3 "$HERE/tools/hatmap-nosdt-retarget.py" "$OUT"
+	run_step 2 python3 "$HERE/tools/hatmap-nosdt-retarget.py" --check "$OUT"
+	HNSCALLERS=$(m68k-linux-gnu-objdump -dr "$OUT" | awk '/^[0-9a-f]+ <[^>]+>:$/{fn=$2} /R_68K_32[ \t]+hat_growsdt_user$/{gsub(/[<>:]/,"",fn); print fn}' | sort | tr '\n' ' ')
+	[ "$HNSCALLERS" = "hat_map " ] || { echo "[FAIL] hat_growsdt_user callers are '$HNSCALLERS', expected hat_map"; exit 1; }
+	[ "$(m68k-linux-gnu-nm "$OUT" | grep -cE " [DT] (hns_magic|hat_legacy_sdt_free)\$")" = "2" ] \
+		|| { echo "[FAIL] hat_legacy_sdt_free is not hatmap_nosdt040's stub"; exit 1; }
+	m68k-linux-gnu-nm "$OUT" | grep -qE " i40_magic\$" && { echo "[FAIL] legacysdt040.o is linked beside the stub"; exit 1; }
+	echo "[OK] ISSUE-110 bound: hat_growsdt_user from $HNSCALLERS; legacy teardown retired"
 fi
 
 echo
