@@ -31,18 +31,34 @@
 |
 | FUTURE OPT: a per-address pflush (VA reachable from the leaf table index) instead of
 | the blanket pflusha would cut the pageout-scan cost; correctness (any flush) first.
+|
+| 2026-11-01 (ISSUE-113): the flush is no longer unconditional.  A PTE whose U and M are
+| both clear is skipped, a cleared PTE's own line is pushed (cpushl dc) instead of both
+| whole caches (cpusha bc), and pflusha runs only when some PTE was cleared.  The contract
+| above is unchanged: every clear is still followed by an ATC flush.
 
 	.text
 	.globl	hat_pagesync
 hat_pagesync:
 	linkw	%fp,&0
-	moveml	%d2/%a2,%sp@-		| callee-saved regs we clobber (d0/d1/a0/a1 = scratch)
+	moveml	%d2-%d3/%a2,%sp@-	| callee-saved regs we clobber (d0/d1/a0/a1 = scratch)
 	moveal	%fp@(8),%a2		| a2 = pp
+	moveq	&0,%d3			| d3 = PTEs whose U/M this call cleared
 	movel	%a2@(32),%d2		| d2 = pp->p_mapping (head: &leaf PTE, or 0)
 	tstl	%d2
 	beqw	Lps_ret			| no mappings -> nothing to sample, no flush
 Lps_loop:
 	moveal	%d2,%a1			| a1 = &PTE (current)
+| ISSUE-113 (2026-11-01): a PTE with U and M both clear has nothing to gather and nothing to clear, and
+| no ATC entry for it can hold a set U or M: the table walk writes U (and M on a write) into the
+| descriptor in memory when it loads the entry, and every clear below is followed by pflusha.  So such a
+| PTE is skipped, and the flush runs only when some PTE was cleared.  fsflush calls this for every page
+| it scans; with the unconditional `cpusha bc; pflusha` it threw away both caches and the ATC hundreds
+| of times a second on an idle machine.
+	movel	%a1@,%d0
+	andil	&0x18,%d0		| U (0x08) | M (0x10)
+	beqw	Lps_next		| both clear: nothing to sample or clear
+	addql	&1,%d3
 	lea	%a1@(3),%a0		| a0 = &PTE low byte (U/M live here)
 |	--- U (referenced): pp->p_ref{6:1} |= PTE U (byte{4:1} = PTE bit3 0x08) ---
 	bfextu	%a2@{&6:&1},%d0
@@ -58,14 +74,18 @@ Lps_loop:
 	movel	%a1@,%d0
 	andil	&0xffffffe7,%d0		| ~0x18
 	movel	%d0,%a1@
+	.word	0xf469			| cpushl dc,(%a1) -- push this PTE's line (the table is identity-mapped)
 |	--- advance: next = *(pte + NPGPT*4) ---
+Lps_next:
 	movel	%a1@(256),%d2
 	tstl	%d2
 	bnew	Lps_loop
-	.word	0xf4f8			| cpusha bc -- push the cleared PTE lines to RAM
+	tstl	%d3
+	beqw	Lps_ret			| nothing cleared: no stale U/M can be in the ATC
+	nop				| the PTE writes are complete before the ATC is flushed
 	.word	0xf518			| pflusha   -- flush the ATC so HW reloads + re-marks U/M
 Lps_ret:
-	moveml	%sp@+,%d2/%a2
+	moveml	%sp@+,%d2-%d3/%a2
 	unlk	%fp
 	rts
 	.balign	4			| pad section to a 4-byte multiple (bss placement guard)
