@@ -10924,3 +10924,158 @@ TCP at boot. 16384 covers IP's own 8192-byte queue plus one segment, so one `ipi
 - Both transfers byte-exact; the pull was unchanged at about 640 KB/s.
 
 The 68030 kit (K030-U) does not pass through `relink-040-fpe.sh`, so its build calls the tool itself.
+
+## ✅ ISSUE-112 (2026-11-01, a defect of this port: MEASURED in emulation on cut `68060-261031-55`; FIXED by `4c6ea89`, verified in emulation on the test builds `68060-261031-91`/`-93`; NOT YET ON HARDWARE): ITT0 and DTT0 matched user accesses, so a user process could read, write and execute physical memory below 1 GiB
+
+> **Ledger: FIXED (emulation).** `src/pstart040.s` loads ITT0 `0x003fa000` and DTT0 `0x003fa060`:
+> S=01, supervisor only, as DTT1 (`0x807fa060`) already was. The kernel keeps its 0-1 GiB identity
+> window; a user access there walks the process's own tables and faults where nothing is mapped.
+
+**Defect.** Since the first 68040 bring-up, pstart040 loaded ITT0 `0x003fc000` and DTT0 `0x003fc060`:
+E=1 and S=1x (FC2 ignored), so both matched user accesses to logical `0x00000000-0x3fffffff` and sent
+them to the same physical address, writable (W=0), with no table walk. DTT1 had been given S=01 long
+before, when copyout's user-FC `moves` to `0x80800000` went transparent; ITT0 and DTT0 never were.
+docs/contracts/DTT0-NARROWING-SPEC.md had the S=01 value as a deferred hardening step.
+
+**Measured on -55 (emulation, A4000 LC060/Z3660; a gcc14 probe, one access per run, nothing written
+beyond page zero):**
+- read `0xC` = `0x00f80bf2` (the chip-RAM vector holding a Kickstart address), read `0x0` =
+  `0x4afc0000`; the value at `0xC` written back succeeded;
+- read word `0xDFF004` (VPOSR) = `0xa301`, then `0xa300`: the live custom chips;
+- read kernel text `kzero` at `0x080dd09c` = `0x2f022f0a`, the same longword adb reads from /dev/kmem;
+- control: `0x40000000` (outside both windows) SIGSEGV, si_code 1.
+- A dynamic executable linked by SVR4 ld carries a read-only zero page (PT_LOAD vaddr 0, filesz 0,
+  memsz 0x1000, R; 193 of amix-system's ET_EXEC files). DTT0 hid it: such a program read chip RAM
+  through NULL, not zeros.
+
+**Verified on -91 (-55 with `4c6ea89`; unix differs from -55 in the two TT immediates and the two
+build-id digits) and -93:** every access above faults (si_code 1 for an unmapped address, 2 for a
+read-only one); the SVR4 zero page reads 0 and a write to it faults, as on the 68030; gcc14's
+`nullread` says "reading address 12 faults (SIGSEGV): page zero is not mapped"; the rig's checks, the
+gcc14 shared-library tests and exectest pass. The census before the change (moves/SFC/DFC sites, the
+060 ISP/FPSP call-outs, wb040's replay, ptest, the user drops, map_addr's 0xC1000000 range) found no
+kernel path that reached the low window with a user function code on a kernel address.
+
+**X is not yet verified.** Xzz9000 reaches the card through mmap of `/dev/zz9000`, which lands in
+map_addr's range (`0xC1000000`-), outside the old DTT0 window, so the change does not touch its path.
+On the emulation row (A4000 LC060/Z3660, z3660rtg 1.1.1-1 installed with its kpkg record, generation
+built with the module) the node does not open: `open` and `modadmin -l z3660rtg` return ENXIO, and the
+same on -55 as on -94. The module finds no card to attach on that row, so X waits for a row with the
+RTG board, or hardware.
+
+**What the fix exposed:** ISSUE-110, user pages at 0-256 MiB walked chip RAM as page tables. The TT
+fix ships only together with it.
+
+## ✅ ISSUE-110 (2026-11-01, a defect of this port's retained stock code, EXPOSED by ISSUE-112's fix: MEASURED and FIXED in emulation on the test builds `68060-261031-91`/`-93`; NOT YET ON HARDWARE): the stock 030 section descriptors share the root page with the native 040 tree, so user pages at 0-256 MiB walk chip RAM as page tables
+
+> **Ledger: FIXED (emulation).** `src/hatmap_nosdt040.s` and `tools/hatmap-nosdt-retarget.py`:
+> hat_map's one call of `hat_growsdt` becomes `hat_growsdt_user`, which writes nothing for a user
+> address space (the kernel's own still reaches the stock body); hat_free's legacy teardown is
+> retired with it and `legacysdt040.o` leaves the link. `HATMAP_NOSDT=0` restores both.
+
+**Defect.** `hat_alloc040` gives the native 68040 root (128 four-byte entries) one 4 KiB page at
+`as@(20)`. The retained stock `hat_map` (from `segvn_create` and `segdev_create`) still grows the
+address space's legacy 030 segment table, and `hat_growsdt` writes the 8-byte 030 section descriptor
+for VA quadrant s at `root + s*8`, the same page:
+
+    section 0 (0x00000000-)  root+0x00..0x07  native A0, A1
+    section 1 (0x40000000-)  root+0x08..0x0f  A2, A3
+    section 2 (0x80000000-)  root+0x10..0x17  A4, A5
+    section 3 (0xc0000000-)  root+0x18..0x1f  A6, A7
+
+The descriptor's first long (limit | DT) lands in an EVEN native entry and reads as a resident pointer
+descriptor whose base is a few bytes above physical 0: low chip RAM. While DTT0 matched user accesses
+(ISSUE-112) no user access below 1 GiB walked the tables, and nothing saw it.
+
+**Measured on -91 (emulation; a read-only private /dev/zero page, read, then written):**
+- A0 (`0x00100000`, and the SVR4 zero page at 0): the process spins in state R until `kill -9`. A
+  scratch latch in the usrxmemflt wrapper (build -92, never shipped) recorded for every fault: FSLW
+  `0x00810080` (write-protect), the leaf PTE through uvatosde `0x092f802d` (resident, W=1), and the
+  060 software ptest `0x400` "invalid" before and after the resolver: the walk refused A0's chip-RAM
+  "pointer table" (not a managed frame), so the stock classifier took the demand path, which resolved
+  nothing, and the CPU retried for ever. The segvn audit (i10s) saw the write reach
+  `segvn_faultpage` once and never again.
+- A4 (`0x09000000`): `PANIC: hat_pt2ptdat: invalid pte ptr`, after hat_free's warnings that it walked
+  A0 "pointer tables" made of chip-RAM words (`BAD-slot A=0 B=1 Bdesc=4E7A2801`, `FF3C2C4F`, ...).
+- A1 (`0x02000000`), A7 (`0x0e000000`), A8, A15: SIGSEGV si_code 2. The odd entries hold the
+  descriptor's table-base long, which the native code overwrites.
+- On -55 the same accesses never walked the tables: a write at `0x09000000` went to physical
+  `0x09000000`, managed kernel RAM, silently.
+
+**Census before the change (read-only, -91 plus stock 2.1c names).** Callers of `hat_growsdt`:
+`hat_init` (the kernel address space; unchanged), `hat_map`, `hat_legacy_sdt_free` (ISSUE-40), and the
+dead stock bodies of `hat_dup` (0xb502a, replaced by hat_dup040, unreferenced), `hat_exec` (0xb6fae,
+our no-op replaced it) and `hat_swapout` (unreachable). hat_map tests only the return before it loads
+URP (the fork root load) and returns; its vnode preload is disabled. `svirtophys`, `vatosde` and
+`vatopte` walk kernel tables only; `uvirtophys` goes through uvatosde040; `valid_usr_range` is section
+arithmetic; prfastmap040 and procfs use the native walk; hat_ptalloc's `hat_sdtalloc`/`hat_sdtfree` are
+the ptdat allocator, not root words. No live reader of a user root's legacy descriptors remains.
+
+**Fix.** hat_map's `R_68K_32 hat_growsdt` at `.text 0xb5884` names `hat_growsdt_user`
+(`tools/hatmap-nosdt-retarget.py`, by symbol; no `.text` byte moves). For `&kas.a_hat` it tail-calls
+the stock body; for any other address space it returns 0 and writes nothing. With no user legacy
+object, ISSUE-40's teardown has nothing to free and a native A4/A6 descriptor would reach
+`hat_sdtfree` past only a shape guard, so `hat_legacy_sdt_free` is now a counting stub and
+`legacysdt040.o` is not linked. relink-040.sh's HARD CHECK wants the stub's imports and exports exact,
+`hat_growsdt_user` named from `hat_map` only, and no `i40_magic` in the image. `HATMAP_NOSDT=0` on
+`c4058ad` reproduces -91's seven sums byte for byte. Counters: `hns_magic` "HNS!", `hns_user_n`,
+`hns_kas_n`, `hns_free_n`.
+
+**Verified on -93 (`c4058ad`: -91 plus this; emulation, A4000 LC060/Z3660):**
+- a read-only page at every native root entry A0..A15 (`n*0x02000000 + 0x100000`): written, SIGSEGV
+  si_code 2, all sixteen; no spin, no panic;
+- the SVR4 zero page: a write before and after a read faults (si_code 2), a read returns 0; gcc14's
+  probe faults at 0 for read, write and jump; `nullread` faults;
+- ISSUE-40's series (`test-tools/leaktest.c`, gcc14 build, availrmem around each run): 300 forks -3,
+  300 fork+execs -4, another 300 fork+execs 0 -- the same as -91 with the legacy objects and their
+  teardown, so no page per exec;
+- exectest 20 PASS; the gcc14 shared-library tests (solib-main-rt, solib-main-interpose, solib-dlopen)
+  PASS; the rig's checks PASS;
+- `hns_user_n` 6949 user growths skipped, `hns_kas_n` 0, `hns_free_n` 2011 retired teardowns.
+
+## ✅ ISSUE-111 (2026-11-01, a stock defect: MEASURED in emulation on cut `68060-261031-55`; GUARDED and verified in emulation on the test build `68060-261031-94`; NOT YET ON HARDWARE): `swap -a` of an area whose anon array finds no free kvseg run sleeps for ever
+
+> **Ledger: FIXED by a guard (emulation).** `src/swapguard.c` (the 68030 line's
+> `kernel/k30/src/swapguard030.c` at this kernel's 4 KiB slot) and `tools/swapguard-retarget.py`;
+> relink-040.sh binds it by default (`SWAP_GUARD=0` leaves it out), and relink-040-f6.sh's operand
+> latch keeps swapconf on the guard.
+
+**Defect** (the same stock code on both lines, root-caused by the 68030 line). swapadd allocates the
+area's anon array, 16 bytes per slot, as one `kmem_zalloc(npages * 16, KM_SLEEP)`. Over 4 KiB that is a
+run of kvseg (sptmap, 0x400 clicks of 4 KiB from `0x40040000`); when no free run is large enough,
+kmem_alloc sleeps on `Km_OsizeWanted` until a large kmem_free that may never come. patch_swapgeom.py
+makes a k46 slot 4 KiB, so the array costs one kvseg click per MiB of swap.
+
+**Measured on -55 (emulation, A4000 LC060/Z3660, a 929 MiB scratch slice; sptmap, availrmem, availsmem,
+tune and anoninfo read from /dev/kmem):**
+- 64 MB: largest free run at boot 0x19d = 413 clicks; 30, 64, 128, 256 MiB added and deleted cleanly;
+  512 MiB: `swap` asleep, WCHAN `819f750` = `Km_OsizeWanted`.
+- 16 MB: largest run 0x27c = 636 clicks; up to 512 MiB added; 768 MiB asleep on `Km_OsizeWanted`.
+- k46's ceiling is therefore about the largest run in MiB, 413 MiB at 64 MB and 636 MiB at 16 MB
+  (the 68030 line: about 50 MiB and 248 MiB).
+- `swap -l` prints half of each area's blocks (30720 for the 61440-block boot slice, 131072 after
+  `swap -a ... 262144`): the stock `swap` command scales pages by the 2 KiB page. anoninfo's ani_max
+  (0x1e00 = 7680 slots of 4 KiB at boot) shows the whole slice in use. A display defect, not lost swap.
+
+**Fix.** `swapadd_guarded` works out the array size as patch_swapgeom.py's swapadd does
+(start `(lowblk*512 + 0xfff) & ~0xfff`, end `((lowblk+nblks)*512) & ~0xfff`, `>> 12`, `* 16`),
+allocates it with KM_NOSLEEP (ENOMEM when it does not fit) and calls swapadd through `swg_swapadd`;
+`swapguard_take`, which swapadd's anon-array `kmem_zalloc` (`asll #4,%d2; movel %d2,%sp@-; jsr`, the
+68030 bytes) now names, hands the block over, or reallocates it KM_NOSLEEP when swapadd clamped the
+first area to its device. One swapadd at a time (a busy flag, sleep at PZERO+1). After the base link
+`tools/swapguard-retarget.py` moves swapconf's, swapctl's and swapfunc's calls to `swapadd_guarded`, the
+anon call to `swapguard_take` and `swg_swapadd`'s initializer to `swapadd`, by symbol. relink-040-f6.sh
+`--swa` then binds swapconf's call to its operand latch `swa_latch` and points the latch's own call at
+`swapadd_guarded` (src/patch_swapadd.py), so the finished kernel's callers are `swa_latch`, `swapctl`
+and `swapfunc`; both relinks check that by name. `SWAP_GUARD=0` on `35bfdf8` reproduces -93's seven sums
+byte for byte. Counters `swg_calls`, `swg_nomem`, `swg_resized`, `swg_last` behind `swg_magic` "SWG!".
+
+**Verified on -94 (`35bfdf8`: -93 plus the guard; emulation, the same rows):**
+- 64 MB: 30, 128, 256 MiB added; 512, 768 and 927 MiB refused at once with `SC_ADD failed` /
+  `swap: Not enough space`, exit 2; no sleep.
+- 16 MB: up to 512 MiB added; 768 and 927 MiB refused the same way.
+- The boot-time add: amix-base 1.0-21's S90swap (/etc/rc2.d/S90swap), a vfstab swap line for the
+  929 MiB slice and `swap_add="all 256 30"`: at boot the kernel refused `swap -a /dev/dsk/c5d0s1 0
+  1904512` at once, S90swap stepped down and added 524288 blocks (256 MiB), and the boot came up, at
+  64 MB and at 16 MB. (amix-base 1.0-17, which reads no swap_add, tried only the whole slice; it too was
+  refused and the boot came up.)

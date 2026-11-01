@@ -12,6 +12,20 @@
 > policy; the optional N1/N2 identity-map redesign below remains future work,
 > not a publication blocker.
 
+> **2026-11-01: the supervisor-only step is done (ISSUE-112).** `src/pstart040.s`
+> loads ITT0 `0x003fa000` and DTT0 `0x003fa060` (commit `4c6ea89`): the same 0-1
+> GiB window, NC for data, now S=01 like DTT1. This is the "cleaner final policy"
+> half of N1 below at the full 1 GiB window, not N1 or N2: the kernel's identity
+> window and every dependency in `DTT0-PHYS-WINDOW-CENSUS.md` are unchanged. With
+> S=1x a user process read and wrote physical memory below 1 GiB (chip RAM, the
+> custom chips, kernel text; measured on cut `68060-261031-55` in emulation). The
+> census this section asks for before the step found no user ABI relying on the
+> transparent low window; a dynamic executable's SVR4 zero page is now the real
+> mapping (reads 0, a write faults). The step exposed and ships with ISSUE-110: the
+> retained stock hat_map wrote 030 section descriptors into native root entries
+> A0..A7, which user pages at 0-256 MiB then walked. Verified in emulation on the
+> test builds `68060-261031-91` and `-93`; hardware is the next cut's nullread row.
+
 ## Decision
 
 For the first real-hardware 68040 B1 writethrough pilot:
