@@ -18,6 +18,7 @@
 #                                         (all three = 0 reproduces the r6 image as first cut)
 #   TCP_HIWAT=0 sh relink-040-fpe.sh ...  opt out of DRIVER-LINE-10 (step 8.8): stock TCP queue
 #                                         (with the three above, reproduces the r6 image)
+#   RLIMITS=0 sh relink-040-fpe.sh ...    opt out of step 8.9: the stock 16 MiB soft data and vmem limits
 #
 #   FPE_REQUIRE_QUEUE=z3660queue FPE_REQUIRE_CARD=1 sh relink-040-fpe.sh ...
 #                                         refuse a base whose root-storage family is not the
@@ -367,6 +368,18 @@ else
 	echo "[*] DRIVER-LINE-10: TCP lower-read hiwat 4096 -> 16384"
 	run_step all python3 "$HERE/src/patch_tcp_hiwat.py" "$OUT"
 	run_step all python3 "$HERE/src/patch_tcp_hiwat.py" --check "$OUT"
+fi
+
+# ---------------------------------------------------------------- 8.9 per-process limits
+# The stock rlimits[] gives a process 16 MiB of data and 16 MiB of address space (SDATLIM, SVMMLIM soft;
+# the hard limits are already unlimited).  Both soft limits become 0x7fffffff; SSTKLIM stays 16 MiB.  Two
+# .data longwords, so after the link.  Idempotent; RLIMITS=0 is the deliberate opt-out (stock limits).
+if [ "${RLIMITS:-1}" = 0 ]; then
+	echo "[*] rlimits: per-process soft limits SKIPPED (RLIMITS=0, deliberate opt-out)"
+else
+	echo "[*] rlimits: SDATLIM and SVMMLIM 16 MiB -> unlimited"
+	run_step all python3 "$HERE/src/patch_rlimits.py" "$OUT"
+	run_step all python3 "$HERE/src/patch_rlimits.py" --check "$OUT"
 fi
 
 # ---------------------------------------------------------------- 9. packaging guards
